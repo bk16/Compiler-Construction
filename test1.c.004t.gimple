@@ -1,0 +1,17 @@
+main ()
+gimple_bind <
+  int D.2183;
+  int a;
+  int d;
+  int b;
+  int c;
+
+  gimple_assign <integer_cst, a, 3, NULL, NULL>
+  gimple_assign <integer_cst, b, 4, NULL, NULL>
+  gimple_assign <integer_cst, d, 1, NULL, NULL>
+  gimple_assign <plus_expr, D.2183, a, b, NULL>
+  gimple_assign <plus_expr, c, D.2183, d, NULL>
+  gimple_call <printf, NULL, "c=%d\n", c>
+>
+
+

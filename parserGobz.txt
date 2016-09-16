@@ -1,0 +1,1315 @@
+
+#include <stdio.h>
+#include <stdlib.h>
+
+#include "parser.h"
+#include "parserDef.h"
+
+struct ListNode * getListNodeMemory()
+{
+	struct ListNode * newNode = malloc(sizeof( listNode ));
+	return newNode;
+}
+
+void populateGrammar(grammar G)
+{
+	G = malloc(sizeof( grammarNode * ) * NUMBER_OF_NONTERMINALS );
+
+	/*to maintain array order, the enum will have to be properly defined*/
+	/*also, 0 index start for non-terminals, and then later constants for terminals, since terminals are just constants*/
+
+	/*program > otherfunctions mainfunction .*/
+	G[program] = malloc(sizeof(grammarNode));
+	G[program]->list = malloc(sizeof( listNode * ) * 1 );	/* x1, since 1 production rule for program non-terminal*/
+ 	G[program]->list[0] = getListNodeMemory(); 	
+	G[program]->list[0]->s = otherfunctions;
+ 	G[program]->list[0]->next = getListNodeMemory();
+	G[program]->list[0]->next->s = mainfunction;
+ 	G[program]->list[0]->next->next = NULL;
+	
+	/*mainfunction > TK_MAIN stmts TK_END .*/
+
+	G[mainfunction] = malloc(sizeof(grammarNode));
+	G[mainfunction]->list = malloc(sizeof( listNode * ) * 1 );	/* x1, since 1 production rule for program non-terminal*/
+ 	G[mainfunction]->list[0] = getListNodeMemory(); 	 	
+	G[mainfunction]->list[0]->s = TK_MAIN;
+ 	G[mainfunction]->list[0]->next = getListNodeMemory();
+	G[mainfunction]->list[0]->next->s = stmts;
+ 	G[mainfunction]->list[0]->next->next = getListNodeMemory();
+ 	G[mainfunction]->list[0]->next->next->s = TK_END;
+ 	G[mainfunction]->list[0]->next->next->next = NULL;
+
+
+	/*otherfunctions > function otherfunctions .
+	  otherfunctions > eps .*/
+	G[otherfunctions] = malloc(sizeof(grammarNode));
+	G[otherfunctions]->list = malloc(sizeof( listNode * ) * 2 );	/* x1, since 1 production rule for program non-terminal*/
+ 	G[otherfunctions]->list[0] = getListNodeMemory(); 	 	
+	G[otherfunctions]->list[0]->s = function;
+ 	G[otherfunctions]->list[0]->next = getListNodeMemory();
+	G[otherfunctions]->list[0]->next->s = otherfunctions;
+ 	G[otherfunctions]->list[0]->next->next = NULL;
+ 	G[otherfunctions]->list[1] = getListNodeMemory(); 	 	
+	G[otherfunctions]->list[1]->s = TK_EPS;
+ 	G[otherfunctions]->list[1]->next = NULL;
+
+	/*function > TK_FUNID input_par output_par TK_SEM stmts TK_END .*/
+
+	G[function] = malloc(sizeof(grammarNode));
+	G[function]->list = malloc(sizeof( listNode * ) * 1 );	/* x1, since 1 production rule for program non-terminal*/
+ 	G[function]->list[0] = getListNodeMemory(); 	 	
+	G[function]->list[0]->s = TK_FUNID;
+ 	G[function]->list[0]->next = getListNodeMemory();
+	G[function]->list[0]->next->s = input_par;
+ 	G[function]->list[0]->next->next = getListNodeMemory();
+ 	G[function]->list[0]->next->next->s = output_par;
+ 	G[function]->list[0]->next->next->next = getListNodeMemory();
+ 	G[function]->list[0]->next->next->next->s = TK_SEM;
+ 	G[function]->list[0]->next->next->next->next = getListNodeMemory();
+ 	G[function]->list[0]->next->next->next->next->s = stmts;
+ 	G[function]->list[0]->next->next->next->next->next = getListNodeMemory();
+ 	G[function]->list[0]->next->next->next->next->next->s = TK_END;
+ 	G[function]->list[0]->next->next->next->next->next->next = NULL;
+
+	/*input_par > TK_INPUT TK_PARAMETER TK_LIST TK_SQL parameter_list TK_SQR .*/
+
+	G[input_par] = malloc(sizeof(grammarNode));
+	G[input_par]->list = malloc(sizeof( listNode * ) * 1 );	
+ 	G[input_par]->list[0] = getListNodeMemory(); 	 	
+	G[input_par]->list[0]->s = TK_INPUT;
+ 	G[input_par]->list[0]->next = getListNodeMemory();
+	G[input_par]->list[0]->next->s = TK_PARAMETER;
+ 	G[input_par]->list[0]->next->next = getListNodeMemory();
+ 	G[input_par]->list[0]->next->next->s = TK_LIST ;
+ 	G[input_par]->list[0]->next->next->next = getListNodeMemory();
+ 	G[input_par]->list[0]->next->next->next->s = TK_SQL;
+ 	G[input_par]->list[0]->next->next->next->next = getListNodeMemory();
+ 	G[input_par]->list[0]->next->next->next->next->s = parameter_list;
+ 	G[input_par]->list[0]->next->next->next->next->next = getListNodeMemory();
+ 	G[input_par]->list[0]->next->next->next->next->next->s = TK_SQR;
+ 	G[input_par]->list[0]->next->next->next->next->next->next = NULL;
+
+	/*output_par > TK_OUTPUT TK_PARAMETER TK_LIST TK_SQL parameter_list TK_SQR .
+	  output_par > eps .*/
+
+	G[output_par] = malloc(sizeof(grammarNode));
+	G[output_par]->list = malloc(sizeof( listNode * ) * 2 );	
+ 	G[output_par]->list[0] = getListNodeMemory(); 	 	
+	G[output_par]->list[0]->s = TK_OUTPUT;
+ 	G[output_par]->list[0]->next = getListNodeMemory();
+	G[output_par]->list[0]->next->s = TK_PARAMETER;
+ 	G[output_par]->list[0]->next->next = getListNodeMemory();
+ 	G[output_par]->list[0]->next->next->s = TK_LIST ;
+ 	G[output_par]->list[0]->next->next->next = getListNodeMemory();
+ 	G[output_par]->list[0]->next->next->next->s = TK_SQL;
+ 	G[output_par]->list[0]->next->next->next->next = getListNodeMemory();
+ 	G[output_par]->list[0]->next->next->next->next->s = parameter_list;
+ 	G[output_par]->list[0]->next->next->next->next->next = getListNodeMemory();
+ 	G[output_par]->list[0]->next->next->next->next->next->s = TK_SQR;
+ 	G[output_par]->list[0]->next->next->next->next->next->next = NULL;
+	G[output_par]->list[1] = getListNodeMemory(); 	 	
+	G[output_par]->list[1]->s = TK_EPS;
+ 	G[output_par]->list[1]->next = NULL;
+	
+	/*parameter_list > datatype TK_ID remaining_list .*/
+	
+	G[parameter_list] = malloc(sizeof(grammarNode));
+	G[parameter_list]->list = malloc(sizeof( listNode * ) * 1 );	
+ 	G[parameter_list]->list[0] = getListNodeMemory(); 	 	
+	G[parameter_list]->list[0]->s = datatype;
+ 	G[parameter_list]->list[0]->next = getListNodeMemory();
+	G[parameter_list]->list[0]->next->s = TK_ID;
+ 	G[parameter_list]->list[0]->next->next = getListNodeMemory();
+ 	G[parameter_list]->list[0]->next->next->s = remaining_list ;
+ 	G[parameter_list]->list[0]->next->next->next = NULL;
+
+	/*datatype > primitivedatatype .
+	  datatype > constructeddatatype .*/
+
+	G[datatype] = malloc(sizeof(grammarNode));
+	G[datatype]->list = malloc(sizeof( listNode * ) * 2 );	
+ 	G[datatype]->list[0] = getListNodeMemory(); 	 	
+	G[datatype]->list[0]->s = primitivedatatype;
+ 	G[datatype]->list[0]->next = NULL;
+	G[datatype]->list[1] = getListNodeMemory(); 	 	
+	G[datatype]->list[1]->s = constructeddatatype;
+ 	G[datatype]->list[1]->next = NULL;
+
+	/*primitivedatatype > TK_INT .
+	  primitivedatatype > TK_REAL .*/
+
+	G[primitivedatatype] = malloc(sizeof(grammarNode));
+	G[primitivedatatype]->list = malloc(sizeof( listNode * ) * 2 );	
+ 	G[primitivedatatype]->list[0] = getListNodeMemory(); 	 	
+	G[primitivedatatype]->list[0]->s = TK_INT ;
+ 	G[primitivedatatype]->list[0]->next = NULL;
+	G[primitivedatatype]->list[1] = getListNodeMemory(); 	 	
+	G[primitivedatatype]->list[1]->s = TK_REAL;
+ 	G[primitivedatatype]->list[1]->next = NULL;
+
+	/*constructeddatatype > TK_RECORD TK_RECORDID .*/
+
+	G[constructeddatatype] = malloc(sizeof(grammarNode));
+	G[constructeddatatype]->list = malloc(sizeof( listNode * ) * 1 );	
+ 	G[constructeddatatype]->list[0] = getListNodeMemory(); 	 	
+	G[constructeddatatype]->list[0]->s = TK_RECORD;
+ 	G[constructeddatatype]->list[0]->next = getListNodeMemory();
+	G[constructeddatatype]->list[0]->next->s = TK_RECORDID;
+ 	G[constructeddatatype]->list[0]->next->next = NULL;
+
+	/*remaining_list > TK_COMMA parameter_list .
+	  remaining_list > eps .*/
+
+	G[remaining_list] = malloc(sizeof(grammarNode));
+	G[remaining_list]->list = malloc(sizeof( listNode * ) * 2 );	
+ 	G[remaining_list]->list[0] = getListNodeMemory(); 	 	
+	G[remaining_list]->list[0]->s = TK_COMMA;
+ 	G[remaining_list]->list[0]->next = getListNodeMemory();
+	G[remaining_list]->list[0]->next->s = parameter_list;
+ 	G[remaining_list]->list[0]->next->next = NULL;
+	G[remaining_list]->list[1] = getListNodeMemory(); 	 	
+	G[remaining_list]->list[1]->s = TK_EPS;
+ 	G[remaining_list]->list[1]->next = NULL;
+
+	/*stmts > typedefinitions declarations otherstmts returnstmt .*/
+
+	G[stmts] = malloc(sizeof(grammarNode));
+	G[stmts]->list = malloc(sizeof( listNode * ) *1 );	
+ 	G[stmts]->list[0] = getListNodeMemory(); 	 	
+	G[stmts]->list[0]->s = typedefinitions;
+ 	G[stmts]->list[0]->next = getListNodeMemory();
+	G[stmts]->list[0]->next->s = declarations;
+ 	G[stmts]->list[0]->next->next = getListNodeMemory();
+ 	G[stmts]->list[0]->next->next->s = otherstmts ;
+ 	G[stmts]->list[0]->next->next->next = getListNodeMemory();
+ 	G[stmts]->list[0]->next->next->next->s = returnstmt;
+ 	G[stmts]->list[0]->next->next->next->next = NULL;
+	
+	/*typedefinitions > typedefinition typedefinitions .
+	  typedefinitions > eps .*/
+
+	G[typedefinitions] = malloc(sizeof(grammarNode));
+	G[typedefinitions]->list = malloc(sizeof( listNode * ) * 2 );	
+ 	G[typedefinitions]->list[0] = getListNodeMemory(); 	 	
+	G[typedefinitions]->list[0]->s = typedefinition;
+ 	G[typedefinitions]->list[0]->next = getListNodeMemory();
+	G[typedefinitions]->list[0]->next->s = typedefinitions;
+ 	G[typedefinitions]->list[0]->next->next = NULL;
+	G[typedefinitions]->list[1] = getListNodeMemory(); 	 	
+	G[typedefinitions]->list[1]->s = TK_EPS;
+ 	G[typedefinitions]->list[1]->next = NULL;
+	
+	/*typedefinition > TK_RECORD TK_RECORDID fielddefinitions TK_ENDRECORD TK_SEM .*/
+
+	G[typedefinition] = malloc(sizeof(grammarNode));
+	G[typedefinition]->list = malloc(sizeof( listNode * ) * 1 );	
+ 	G[typedefinition]->list[0] = getListNodeMemory(); 	 	
+	G[typedefinition]->list[0]->s = TK_RECORD;
+ 	G[typedefinition]->list[0]->next = getListNodeMemory();
+	G[typedefinition]->list[0]->next->s = TK_RECORDID;
+ 	G[typedefinition]->list[0]->next->next = getListNodeMemory();
+ 	G[typedefinition]->list[0]->next->next->s = fielddefinitions ;
+ 	G[typedefinition]->list[0]->next->next->next = getListNodeMemory();
+ 	G[typedefinition]->list[0]->next->next->next->s = TK_ENDRECORD;
+ 	G[typedefinition]->list[0]->next->next->next->next = getListNodeMemory();
+	G[typedefinition]->list[0]->next->next->next->next->s = TK_SEM;
+	G[typedefinition]->list[0]->next->next->next->next->next = NULL;
+
+	/*check this rule!!*/
+	/*fielddefinitions > fielddefinition fielddefinitions morefields .*/
+
+	G[fielddefinitions] = malloc(sizeof(grammarNode));
+	G[fielddefinitions]->list = malloc(sizeof( listNode * ) * 1 );	
+ 	G[fielddefinitions]->list[0] = getListNodeMemory(); 	 	
+	G[fielddefinitions]->list[0]->s = fielddefinition;
+ 	G[fielddefinitions]->list[0]->next = getListNodeMemory();
+	G[fielddefinitions]->list[0]->next->s = fielddefinitions;
+ 	G[fielddefinitions]->list[0]->next->next = getListNodeMemory();
+ 	G[fielddefinitions]->list[0]->next->next->s = morefields ;
+ 	G[fielddefinitions]->list[0]->next->next->next = NULL;
+
+	/*fielddefinition > TK_TYPE primitivedatatype TK_COLON TK_FIELDID TK_SEM .*/
+
+	G[fielddefinition] = malloc(sizeof(grammarNode));
+	G[fielddefinition]->list = malloc(sizeof( listNode * ) * 1 );	
+ 	G[fielddefinition]->list[0] = getListNodeMemory(); 	 	
+	G[fielddefinition]->list[0]->s = TK_TYPE;
+ 	G[fielddefinition]->list[0]->next = getListNodeMemory();
+	G[fielddefinition]->list[0]->next->s = primitivedatatype;
+ 	G[fielddefinition]->list[0]->next->next = getListNodeMemory();
+ 	G[fielddefinition]->list[0]->next->next->s = TK_COLON ;
+ 	G[fielddefinition]->list[0]->next->next->next = getListNodeMemory();
+ 	G[fielddefinition]->list[0]->next->next->next->s = TK_FIELDID;
+ 	G[fielddefinition]->list[0]->next->next->next->next = getListNodeMemory();
+	G[fielddefinition]->list[0]->next->next->next->next->s = TK_SEM;
+	G[fielddefinition]->list[0]->next->next->next->next->next = NULL;
+
+	/*morefields > fielddefinition morefields .
+	  morefields > eps .*/
+
+	G[morefields] = malloc(sizeof(grammarNode));
+	G[morefields]->list = malloc(sizeof( listNode * ) * 2 );	
+ 	G[morefields]->list[0] = getListNodeMemory(); 	 	
+	G[morefields]->list[0]->s = fielddefinition;
+ 	G[morefields]->list[0]->next = getListNodeMemory();
+	G[morefields]->list[0]->next->s = morefields;
+ 	G[morefields]->list[0]->next->next = NULL;
+	G[morefields]->list[1] = getListNodeMemory(); 	 	
+	G[morefields]->list[1]->s = TK_EPS;
+ 	G[morefields]->list[1]->next = NULL;
+
+	/*declarations > declaration declarations .
+ 	  declarations > eps .*/
+	
+	G[declarations] = malloc(sizeof(grammarNode));
+	G[declarations]->list = malloc(sizeof( listNode * ) * 2 );	
+ 	G[declarations]->list[0] = getListNodeMemory(); 	 	
+	G[declarations]->list[0]->s = declaration;
+ 	G[declarations]->list[0]->next = getListNodeMemory();
+	G[declarations]->list[0]->next->s = declarations;
+ 	G[declarations]->list[0]->next->next = NULL;
+	G[declarations]->list[1] = getListNodeMemory(); 	 	
+	G[declarations]->list[1]->s = TK_EPS;
+ 	G[declarations]->list[1]->next = NULL;
+
+	/*declaration > TK_TYPE datatype TK_COLON TK_ID global_or_not TK_SEM .*/
+
+	G[declaration] = malloc(sizeof(grammarNode));
+	G[declaration]->list = malloc(sizeof( listNode * ) * 1 );	
+ 	G[declaration]->list[0] = getListNodeMemory(); 	 	
+	G[declaration]->list[0]->s = TK_TYPE;
+ 	G[declaration]->list[0]->next = getListNodeMemory();
+	G[declaration]->list[0]->next->s = datatype;
+ 	G[declaration]->list[0]->next->next = getListNodeMemory();
+ 	G[declaration]->list[0]->next->next->s = TK_COLON ;
+ 	G[declaration]->list[0]->next->next->next = getListNodeMemory();
+ 	G[declaration]->list[0]->next->next->next->s = TK_ID;
+ 	G[declaration]->list[0]->next->next->next->next = getListNodeMemory();
+ 	G[declaration]->list[0]->next->next->next->next->s = global_or_not ;
+ 	G[declaration]->list[0]->next->next->next->next->next = getListNodeMemory();
+ 	G[declaration]->list[0]->next->next->next->next->next->s = TK_SEM;
+ 	G[declaration]->list[0]->next->next->next->next->next->next = NULL;	
+	
+	/*global_or_not > TK_COLON TK_GLOBAL .
+	  global_or_not > eps .*/
+
+	G[global_or_not] = malloc(sizeof(grammarNode));
+	G[global_or_not]->list = malloc(sizeof( listNode * ) * 2 );	
+ 	G[global_or_not]->list[0] = getListNodeMemory(); 	 	
+	G[global_or_not]->list[0]->s = TK_COLON;
+ 	G[global_or_not]->list[0]->next = getListNodeMemory();
+	G[global_or_not]->list[0]->next->s = TK_GLOBAL;
+ 	G[global_or_not]->list[0]->next->next = NULL;
+	G[global_or_not]->list[1] = getListNodeMemory(); 	 	
+	G[global_or_not]->list[1]->s = TK_EPS;
+ 	G[global_or_not]->list[1]->next = NULL;
+
+	/*otherstmts > stmt otherstmts .
+	otherstmts > eps .*/
+
+	G[otherstmts] = malloc(sizeof(grammarNode));
+	G[otherstmts]->list = malloc(sizeof( listNode * ) * 2 );	
+ 	G[otherstmts]->list[0] = getListNodeMemory(); 	 	
+	G[otherstmts]->list[0]->s = stmt;
+ 	G[otherstmts]->list[0]->next = getListNodeMemory();
+	G[otherstmts]->list[0]->next->s = otherstmts;
+ 	G[otherstmts]->list[0]->next->next = NULL;
+	G[otherstmts]->list[1] = getListNodeMemory(); 	 	
+	G[otherstmts]->list[1]->s = TK_EPS;
+ 	G[otherstmts]->list[1]->next = NULL;
+
+	/*stmt > assignmentstmt .
+	  stmt > iterativestmt .
+	  stmt > conditionalstmt .
+	  stmt > iostmt .
+	  stmt > funcallstmt .*/
+	
+	G[stmt] = malloc(sizeof(grammarNode));
+	G[stmt]->list = malloc(sizeof( listNode * ) * 5 );	
+ 	G[stmt]->list[0] = getListNodeMemory(); 	 	
+	G[stmt]->list[0]->s = assignmentstmt;
+ 	G[stmt]->list[0]->next = NULL;
+	G[stmt]->list[1] = getListNodeMemory(); 	 	
+	G[stmt]->list[1]->s = iterativestmt;
+ 	G[stmt]->list[1]->next = NULL;
+	G[stmt]->list[2] = getListNodeMemory(); 	 	
+	G[stmt]->list[2]->s = conditionalstmt;
+ 	G[stmt]->list[2]->next = NULL;
+	G[stmt]->list[3] = getListNodeMemory(); 	 	
+	G[stmt]->list[3]->s = iostmt;
+ 	G[stmt]->list[3]->next = NULL;
+	G[stmt]->list[4] = getListNodeMemory(); 	 	
+	G[stmt]->list[4]->s = funcallstmt;
+ 	G[stmt]->list[4]->next = NULL;
+
+	/*assignmentstmt > singleorrecid TK_ASSIGNOP arithmeticexpression TK_SEM .*/
+
+	G[assignmentstmt] = malloc(sizeof(grammarNode));
+	G[assignmentstmt]->list = malloc(sizeof( listNode * ) * 1 );	
+ 	G[assignmentstmt]->list[0] = getListNodeMemory(); 	 	
+	G[assignmentstmt]->list[0]->s = singleorrecid;
+ 	G[assignmentstmt]->list[0]->next = getListNodeMemory();
+	G[assignmentstmt]->list[0]->next->s = TK_ASSIGNOP;
+ 	G[assignmentstmt]->list[0]->next->next = getListNodeMemory();
+ 	G[assignmentstmt]->list[0]->next->next->s = arithmeticexpression ;
+ 	G[assignmentstmt]->list[0]->next->next->next = getListNodeMemory();
+ 	G[assignmentstmt]->list[0]->next->next->next->s = TK_SEM;
+ 	G[assignmentstmt]->list[0]->next->next->next->next = NULL;
+	
+	/*singleorrecid > TK_ID newstate .*/
+
+	G[singleorrecid] = malloc(sizeof(grammarNode));
+	G[singleorrecid]->list = malloc(sizeof( listNode * ) * 1 );	
+ 	G[singleorrecid]->list[0] = getListNodeMemory(); 	 	
+	G[singleorrecid]->list[0]->s = TK_ID;
+ 	G[singleorrecid]->list[0]->next = getListNodeMemory();
+	G[singleorrecid]->list[0]->next->s = newstate;
+ 	G[singleorrecid]->list[0]->next->next = NULL;
+
+	/*newstate > TK_DOT TK_FIELDID .
+	  newstate > eps .*/
+
+	G[newstate] = malloc(sizeof(grammarNode));
+	G[newstate]->list = malloc(sizeof( listNode * ) * 2 );	
+ 	G[newstate]->list[0] = getListNodeMemory(); 	 	
+	G[newstate]->list[0]->s = TK_DOT;
+ 	G[newstate]->list[0]->next = getListNodeMemory();
+	G[newstate]->list[0]->next->s = TK_FIELDID ;
+ 	G[newstate]->list[0]->next->next = NULL;
+	G[newstate]->list[1] = getListNodeMemory(); 	 	
+	G[newstate]->list[1]->s = TK_EPS;
+ 	G[newstate]->list[1]->next = NULL;
+
+	/*funcallstmt > outputparameters TK_CALL TK_FUNID TK_WITH TK_PARAMETERS inputparameters TK_SEM.*/
+
+	G[funcallstmt] = malloc(sizeof(grammarNode));
+	G[funcallstmt]->list = malloc(sizeof( listNode * ) * 1 );	
+ 	G[funcallstmt]->list[0] = getListNodeMemory(); 	 	
+	G[funcallstmt]->list[0]->s = outputparameters;
+ 	G[funcallstmt]->list[0]->next = getListNodeMemory();
+	G[funcallstmt]->list[0]->next->s = TK_CALL;
+ 	G[funcallstmt]->list[0]->next->next = getListNodeMemory();
+ 	G[funcallstmt]->list[0]->next->next->s = TK_FUNID ;
+ 	G[funcallstmt]->list[0]->next->next->next = getListNodeMemory();
+ 	G[funcallstmt]->list[0]->next->next->next->s = TK_WITH;
+ 	G[funcallstmt]->list[0]->next->next->next->next = getListNodeMemory();
+ 	G[funcallstmt]->list[0]->next->next->next->next->s = TK_PARAMETERS;
+ 	G[funcallstmt]->list[0]->next->next->next->next->next = getListNodeMemory();
+ 	G[funcallstmt]->list[0]->next->next->next->next->next->s = inputparameters;
+ 	G[funcallstmt]->list[0]->next->next->next->next->next->next = getListNodeMemory();
+ 	G[funcallstmt]->list[0]->next->next->next->next->next->next->s = TK_SEM;
+ 	G[funcallstmt]->list[0]->next->next->next->next->next->next->next = NULL;
+
+	/*outputparameters > TK_SQL idlist TK_SQR TK_ASSIGNOP .
+	  outputparameters > eps .*/
+
+	G[outputparameters] = malloc(sizeof(grammarNode));
+	G[outputparameters]->list = malloc(sizeof( listNode * ) * 2 );	
+ 	G[outputparameters]->list[0] = getListNodeMemory(); 	 	
+	G[outputparameters]->list[0]->s = TK_SQL;
+ 	G[outputparameters]->list[0]->next = getListNodeMemory();
+	G[outputparameters]->list[0]->next->s = idlist ;
+	G[outputparameters]->list[0]->next->next = getListNodeMemory();
+ 	G[outputparameters]->list[0]->next->next->s = TK_SQR ;
+ 	G[outputparameters]->list[0]->next->next->next = getListNodeMemory();
+ 	G[outputparameters]->list[0]->next->next->next->s = TK_ASSIGNOP;
+ 	G[outputparameters]->list[0]->next->next->next->next = NULL;
+	G[outputparameters]->list[1] = getListNodeMemory(); 	 	
+	G[outputparameters]->list[1]->s = TK_EPS;
+ 	G[outputparameters]->list[1]->next = NULL;
+
+	/*inputparameters > TK_SQL idlist TK_SQR .*/
+	
+	G[inputparameters] = malloc(sizeof(grammarNode));
+	G[inputparameters]->list = malloc(sizeof( listNode * ) * 1 );	
+ 	G[inputparameters]->list[0] = getListNodeMemory(); 	 	
+	G[inputparameters]->list[0]->s = TK_SQL;
+ 	G[inputparameters]->list[0]->next = getListNodeMemory();
+	G[inputparameters]->list[0]->next->s = idlist ;
+	G[inputparameters]->list[0]->next->next = getListNodeMemory();
+ 	G[inputparameters]->list[0]->next->next->s = TK_SQR ;
+ 	G[inputparameters]->list[0]->next->next->next = NULL;
+	
+	/*iterativestmt > TK_WHILE TK_OP booleanexpression TK_CL stmt otherstmts TK_ENDWHILE .*/
+
+	G[iterativestmt] = malloc(sizeof(grammarNode));
+	G[iterativestmt]->list = malloc(sizeof( listNode * ) * 1 );	
+ 	G[iterativestmt]->list[0] = getListNodeMemory(); 	 	
+	G[iterativestmt]->list[0]->s = TK_WHILE;
+ 	G[iterativestmt]->list[0]->next = getListNodeMemory();
+	G[iterativestmt]->list[0]->next->s = TK_OP;
+ 	G[iterativestmt]->list[0]->next->next = getListNodeMemory();
+ 	G[iterativestmt]->list[0]->next->next->s = booleanexpression ;
+ 	G[iterativestmt]->list[0]->next->next->next = getListNodeMemory();
+ 	G[iterativestmt]->list[0]->next->next->next->s = TK_CL;
+ 	G[iterativestmt]->list[0]->next->next->next->next = getListNodeMemory();
+ 	G[iterativestmt]->list[0]->next->next->next->next->s = stmt;
+ 	G[iterativestmt]->list[0]->next->next->next->next->next = getListNodeMemory();
+ 	G[iterativestmt]->list[0]->next->next->next->next->next->s = otherstmts;
+ 	G[iterativestmt]->list[0]->next->next->next->next->next->next = getListNodeMemory();
+ 	G[iterativestmt]->list[0]->next->next->next->next->next->next->s = TK_ENDWHILE;
+ 	G[iterativestmt]->list[0]->next->next->next->next->next->next->next = NULL;
+
+	/*conditionalstmt > TK_IF TK_OP booleanexpression TK_CL TK_THEN stmt otherstmts elsepart .*/
+
+	G[conditionalstmt] = malloc(sizeof(grammarNode));
+	G[conditionalstmt]->list = malloc(sizeof( listNode * ) * 1 );	
+ 	G[conditionalstmt]->list[0] = getListNodeMemory(); 	 	
+	G[conditionalstmt]->list[0]->s = TK_IF;
+ 	G[conditionalstmt]->list[0]->next = getListNodeMemory();
+	G[conditionalstmt]->list[0]->next->s = TK_OP;
+ 	G[conditionalstmt]->list[0]->next->next = getListNodeMemory();
+ 	G[conditionalstmt]->list[0]->next->next->s = booleanexpression ;
+ 	G[conditionalstmt]->list[0]->next->next->next = getListNodeMemory();
+ 	G[conditionalstmt]->list[0]->next->next->next->s = TK_CL;
+ 	G[conditionalstmt]->list[0]->next->next->next->next = getListNodeMemory();
+ 	G[conditionalstmt]->list[0]->next->next->next->next->s = TK_THEN;
+ 	G[conditionalstmt]->list[0]->next->next->next->next->next = getListNodeMemory();
+ 	G[conditionalstmt]->list[0]->next->next->next->next->next->s = stmt;
+ 	G[conditionalstmt]->list[0]->next->next->next->next->next->next = getListNodeMemory();
+ 	G[conditionalstmt]->list[0]->next->next->next->next->next->next->s = otherstmts;
+ 	G[conditionalstmt]->list[0]->next->next->next->next->next->next->next = getListNodeMemory();
+ 	G[conditionalstmt]->list[0]->next->next->next->next->next->next->next->s = elsepart;
+ 	G[conditionalstmt]->list[0]->next->next->next->next->next->next->next->next = NULL;
+
+	/*elsepart > TK_ELSE stmt otherstmts TK_ENDIF .
+	  elsepart > TK_ENDIF .*/
+
+	G[elsepart] = malloc(sizeof(grammarNode));
+	G[elsepart]->list = malloc(sizeof( listNode * ) * 2 );	
+ 	G[elsepart]->list[0] = getListNodeMemory(); 	 	
+	G[elsepart]->list[0]->s = TK_ELSE;
+ 	G[elsepart]->list[0]->next = getListNodeMemory();
+	G[elsepart]->list[0]->next->s = stmt ;
+	G[elsepart]->list[0]->next->next = getListNodeMemory();
+ 	G[elsepart]->list[0]->next->next->s = otherstmts ;
+ 	G[elsepart]->list[0]->next->next->next = getListNodeMemory();
+ 	G[elsepart]->list[0]->next->next->next->s = TK_ENDIF;
+ 	G[elsepart]->list[0]->next->next->next->next = NULL;
+	G[elsepart]->list[1] = getListNodeMemory(); 	 	
+	G[elsepart]->list[1]->s = TK_ENDIF;
+ 	G[elsepart]->list[1]->next = NULL;
+
+	/*iostmt > TK_READ TK_OP singleorrecid TK_CL TK_SEM .
+	  iostmt > TK_WRITE TK_OP allvar TK_CL TK_SEM .*/
+
+	G[iostmt] = malloc(sizeof(grammarNode));
+	G[iostmt]->list = malloc(sizeof( listNode * ) * 2 );	
+ 	G[iostmt]->list[0] = getListNodeMemory(); 	 	
+	G[iostmt]->list[0]->s = TK_READ;
+ 	G[iostmt]->list[0]->next = getListNodeMemory();
+	G[iostmt]->list[0]->next->s = TK_OP;
+ 	G[iostmt]->list[0]->next->next = getListNodeMemory();
+ 	G[iostmt]->list[0]->next->next->s = singleorrecid ;
+ 	G[iostmt]->list[0]->next->next->next = getListNodeMemory();
+ 	G[iostmt]->list[0]->next->next->next->s = TK_CL;
+ 	G[iostmt]->list[0]->next->next->next->next = getListNodeMemory();
+ 	G[iostmt]->list[0]->next->next->next->next->s = TK_SEM;
+ 	G[iostmt]->list[0]->next->next->next->next->next = NULL;
+	G[iostmt]->list[1] = getListNodeMemory(); 	 	
+	G[iostmt]->list[1]->s = TK_WRITE;
+ 	G[iostmt]->list[1]->next = getListNodeMemory();
+	G[iostmt]->list[1]->next->s = TK_OP;
+ 	G[iostmt]->list[1]->next->next = getListNodeMemory();
+ 	G[iostmt]->list[1]->next->next->s = allvar ;
+ 	G[iostmt]->list[1]->next->next->next = getListNodeMemory();
+ 	G[iostmt]->list[1]->next->next->next->s = TK_CL;
+ 	G[iostmt]->list[1]->next->next->next->next = getListNodeMemory();
+ 	G[iostmt]->list[1]->next->next->next->next->s = TK_SEM;
+ 	G[iostmt]->list[1]->next->next->next->next->next = NULL;
+
+	/*allvar > var .
+	  allvar > TK_ID TK_DOT TK_FIELDID .*/
+
+	G[allvar] = malloc(sizeof(grammarNode));
+	G[allvar]->list = malloc(sizeof( listNode * ) * 2 );
+	G[allvar]->list[0] = getListNodeMemory(); 	 	
+	G[allvar]->list[0]->s = var;
+ 	G[allvar]->list[0]->next = NULL;	
+ 	G[allvar]->list[1] = getListNodeMemory(); 	 	
+	G[allvar]->list[1]->s = TK_ID;
+ 	G[allvar]->list[1]->next = getListNodeMemory();
+	G[allvar]->list[1]->next->s = TK_DOT;
+ 	G[allvar]->list[1]->next->next = getListNodeMemory();
+ 	G[allvar]->list[1]->next->next->s = TK_FIELDID ;
+ 	G[allvar]->list[1]->next->next->next = NULL;
+
+	/*arithmeticexpression > term expprime .*/
+
+	G[arithmeticexpression] = malloc(sizeof(grammarNode));
+	G[arithmeticexpression]->list = malloc(sizeof( listNode * ) * 1 );	
+ 	G[arithmeticexpression]->list[0] = getListNodeMemory(); 	 	
+	G[arithmeticexpression]->list[0]->s = term;
+ 	G[arithmeticexpression]->list[0]->next = getListNodeMemory();
+	G[arithmeticexpression]->list[0]->next->s = expprime;
+ 	G[arithmeticexpression]->list[0]->next->next = NULL;
+
+	/*expprime > lowprecedenceoperators term expprime .
+	  expprime > eps .*/
+
+	G[expprime] = malloc(sizeof(grammarNode));
+	G[expprime]->list = malloc(sizeof( listNode * ) * 2 );
+	G[expprime]->list[0] = getListNodeMemory(); 	 	
+	G[expprime]->list[0]->s = lowprecedenceoperators;
+ 	G[expprime]->list[0]->next = getListNodeMemory();
+	G[expprime]->list[0]->next->s = term;
+ 	G[expprime]->list[0]->next->next = getListNodeMemory();
+ 	G[expprime]->list[0]->next->next->s = expprime ;
+ 	G[expprime]->list[0]->next->next->next = NULL;
+	G[expprime]->list[1] = getListNodeMemory(); 	 	
+	G[expprime]->list[1]->s = TK_EPS;
+ 	G[expprime]->list[1]->next = NULL;	
+ 	
+	/*term > factor termprime .*/
+
+	G[term] = malloc(sizeof(grammarNode));
+	G[term]->list = malloc(sizeof( listNode * ) * 1 );
+	G[term]->list[0] = getListNodeMemory(); 	 	
+	G[term]->list[0]->s = factor;
+ 	G[term]->list[0]->next = getListNodeMemory();
+	G[term]->list[0]->next->s = termprime;
+ 	G[term]->list[0]->next->next = NULL;
+	
+	/*termprime > highprecedenceoperators factor termprime .
+	  termprime > eps .*/
+
+	G[termprime] = malloc(sizeof(grammarNode));
+	G[termprime]->list = malloc(sizeof( listNode * ) * 2 );
+	G[termprime]->list[0] = getListNodeMemory(); 	 	
+	G[termprime]->list[0]->s = highprecedenceoperators;
+ 	G[termprime]->list[0]->next = getListNodeMemory();
+	G[termprime]->list[0]->next->s = factor;
+ 	G[termprime]->list[0]->next->next = getListNodeMemory();
+ 	G[termprime]->list[0]->next->next->s = termprime ;
+ 	G[termprime]->list[0]->next->next->next = NULL;
+	G[termprime]->list[1] = getListNodeMemory(); 	 	
+	G[termprime]->list[1]->s = TK_EPS;
+ 	G[termprime]->list[1]->next = NULL;
+	
+	/*factor > TK_OP arithmeticexpression TK_CL .
+	  factor > all .*/
+
+	G[factor] = malloc(sizeof(grammarNode));
+	G[factor]->list = malloc(sizeof( listNode * ) * 2 );
+	G[factor]->list[0] = getListNodeMemory(); 	 	
+	G[factor]->list[0]->s = TK_OP;
+ 	G[factor]->list[0]->next = getListNodeMemory();
+	G[factor]->list[0]->next->s = arithmeticexpression;
+ 	G[factor]->list[0]->next->next = getListNodeMemory();
+ 	G[factor]->list[0]->next->next->s = TK_CL ;
+ 	G[factor]->list[0]->next->next->next = NULL;
+	G[factor]->list[1] = getListNodeMemory(); 	 	
+	G[factor]->list[1]->s = all;
+ 	G[factor]->list[1]->next = NULL;
+
+	/*highprecedenceoperators > TK_MUL .
+	  highprecedenceoperators > TK_DIV .*/
+
+	G[highprecedenceoperators] = malloc(sizeof(grammarNode));
+	G[highprecedenceoperators]->list = malloc(sizeof( listNode * ) * 2 );
+	G[highprecedenceoperators]->list[0] = getListNodeMemory(); 	 	
+	G[highprecedenceoperators]->list[0]->s = TK_MUL;
+ 	G[highprecedenceoperators]->list[0]->next = NULL;
+	G[highprecedenceoperators]->list[1] = getListNodeMemory(); 	 	
+	G[highprecedenceoperators]->list[1]->s = TK_DIV;
+ 	G[highprecedenceoperators]->list[1]->next = NULL;
+
+	/*lowprecedenceoperators > TK_PLUS .
+	  lowprecedenceoperators > TK_MINUS .*/
+	
+	G[lowprecedenceoperators] = malloc(sizeof(grammarNode));
+	G[lowprecedenceoperators]->list = malloc(sizeof( listNode * ) * 2 );
+	G[lowprecedenceoperators]->list[0] = getListNodeMemory(); 	 	
+	G[lowprecedenceoperators]->list[0]->s = TK_PLUS;
+ 	G[lowprecedenceoperators]->list[0]->next = NULL;
+	G[lowprecedenceoperators]->list[1] = getListNodeMemory(); 	 	
+	G[lowprecedenceoperators]->list[1]->s = TK_MINUS;
+ 	G[lowprecedenceoperators]->list[1]->next = NULL;
+
+	/*all > TK_NUM .
+	  all > TK_RNUM .
+	  all > TK_ID all2 */
+
+	G[all] = malloc(sizeof(grammarNode));
+	G[all]->list = malloc(sizeof( listNode * ) * 3 );
+	G[all]->list[0] = getListNodeMemory(); 	 	
+	G[all]->list[0]->s = TK_NUM;
+ 	G[all]->list[0]->next = NULL;
+	G[all]->list[1] = getListNodeMemory(); 	 	
+	G[all]->list[1]->s = TK_RNUM;
+ 	G[all]->list[1]->next = NULL;
+	G[all]->list[2] = getListNodeMemory(); 	 	
+	G[all]->list[2]->s = TK_RNUM;
+ 	G[all]->list[2]->next = getListNodeMemory();
+ 	G[all]->list[2]->next->s = all2;
+ 	G[all]->list[2]->next->next = NULL;
+	
+	/*all2 > temp .
+	  all2 > eps .*/
+
+	G[all2] = malloc(sizeof(grammarNode));
+	G[all2]->list = malloc(sizeof( listNode * ) * 2 );
+	G[all2]->list[0] = getListNodeMemory(); 	 	
+	G[all2]->list[0]->s = temp;
+ 	G[all2]->list[0]->next = NULL;
+	G[all2]->list[1] = getListNodeMemory(); 	 	
+	G[all2]->list[1]->s = TK_EPS;
+ 	G[all2]->list[1]->next = NULL;
+
+	/*temp > eps .
+	  temp > TK_DOT TK_FIELDID .*/
+	
+	G[temp] = malloc(sizeof(grammarNode));
+	G[temp]->list = malloc(sizeof( listNode * ) * 2 );
+	G[temp]->list[0] = getListNodeMemory(); 	 	
+	G[temp]->list[0]->s = TK_EPS;
+ 	G[temp]->list[0]->next = NULL;
+	G[temp]->list[1] = getListNodeMemory(); 	 	
+	G[temp]->list[1]->s = TK_DOT;
+ 	G[temp]->list[1]->next = getListNodeMemory();
+ 	G[temp]->list[1]->next->s = TK_FIELDID;
+ 	G[temp]->list[1]->next->next = NULL;
+
+	/*booleanexpression > TK_OP booleanexpression TK_CL logicalop TK_OP booleanexpression TK_CL .
+	booleanexpression > var relationalop var .
+	booleanexpression > TK_NOT TK_OP booleanexpression TK_CL .*/
+
+	G[booleanexpression] = malloc(sizeof(grammarNode));
+	G[booleanexpression]->list = malloc(sizeof( listNode * ) * 3 );	
+ 	G[booleanexpression]->list[0] = getListNodeMemory(); 	 	
+	G[booleanexpression]->list[0]->s = TK_OP;
+ 	G[booleanexpression]->list[0]->next = getListNodeMemory();
+	G[booleanexpression]->list[0]->next->s = booleanexpression;
+ 	G[booleanexpression]->list[0]->next->next = getListNodeMemory();
+ 	G[booleanexpression]->list[0]->next->next->s = TK_CL ;
+ 	G[booleanexpression]->list[0]->next->next->next = getListNodeMemory();
+ 	G[booleanexpression]->list[0]->next->next->next->s = logicalop;
+ 	G[booleanexpression]->list[0]->next->next->next->next = getListNodeMemory();
+ 	G[booleanexpression]->list[0]->next->next->next->next->s = TK_OP;
+ 	G[booleanexpression]->list[0]->next->next->next->next->next = getListNodeMemory();
+ 	G[booleanexpression]->list[0]->next->next->next->next->next->s = booleanexpression;
+ 	G[booleanexpression]->list[0]->next->next->next->next->next->next = getListNodeMemory();
+ 	G[booleanexpression]->list[0]->next->next->next->next->next->next->s = TK_CL;
+ 	G[booleanexpression]->list[0]->next->next->next->next->next->next->next = NULL;
+	G[booleanexpression]->list[1] = getListNodeMemory(); 	 	
+	G[booleanexpression]->list[1]->s = var;
+ 	G[booleanexpression]->list[1]->next = getListNodeMemory();
+	G[booleanexpression]->list[1]->next->s = relationalop;
+ 	G[booleanexpression]->list[1]->next->next = getListNodeMemory();
+ 	G[booleanexpression]->list[1]->next->next->s = var ;
+ 	G[booleanexpression]->list[1]->next->next->next = NULL;
+	G[booleanexpression]->list[2] = getListNodeMemory(); 	 	
+	G[booleanexpression]->list[2]->s = TK_NOT;
+ 	G[booleanexpression]->list[2]->next = getListNodeMemory();
+	G[booleanexpression]->list[2]->next->s = TK_OP;
+ 	G[booleanexpression]->list[2]->next->next = getListNodeMemory();
+ 	G[booleanexpression]->list[2]->next->next->s =booleanexpression ;
+ 	G[booleanexpression]->list[2]->next->next->next = getListNodeMemory();
+ 	G[booleanexpression]->list[2]->next->next->next->s = TK_CL;
+ 	G[booleanexpression]->list[2]->next->next->next->next = NULL;
+
+	/*var > TK_ID .
+	var > TK_NUM .
+	var > TK_RNUM .*/
+	
+	G[var] = malloc(sizeof(grammarNode));
+	G[var]->list = malloc(sizeof( listNode * ) * 3 );
+	G[var]->list[0] = getListNodeMemory(); 	 	
+	G[var]->list[0]->s = TK_ID;
+ 	G[var]->list[0]->next = NULL;
+	G[var]->list[1] = getListNodeMemory(); 	 	
+	G[var]->list[1]->s = TK_NUM;
+ 	G[var]->list[1]->next = NULL;
+	G[var]->list[2] = getListNodeMemory(); 	 	
+	G[var]->list[2]->s = TK_RNUM;
+ 	G[var]->list[2]->next = NULL;
+
+	/*logicalop > TK_AND .
+	logicalop > TK_OR .*/
+
+	G[logicalop] = malloc(sizeof(grammarNode));
+	G[logicalop]->list = malloc(sizeof( listNode * ) * 2 );
+	G[logicalop]->list[0] = getListNodeMemory(); 	 	
+	G[logicalop]->list[0]->s = TK_AND;
+ 	G[logicalop]->list[0]->next = NULL;
+	G[logicalop]->list[1] = getListNodeMemory(); 	 	
+	G[logicalop]->list[1]->s = TK_OR;
+ 	G[logicalop]->list[1]->next = NULL;
+
+	/*relationalop > TK_LT .
+	relationalop > TK_LE .
+	relationalop > TK_EQ .
+	relationalop > TK_GT .
+	relationalop > TK_GE .
+	relationalop > TK_NE .*/
+
+	G[relationalop] = malloc(sizeof(grammarNode));
+	G[relationalop]->list = malloc(sizeof( listNode * ) * 6 );	
+ 	G[relationalop]->list[0] = getListNodeMemory(); 	 	
+	G[relationalop]->list[0]->s = TK_LT;
+ 	G[relationalop]->list[0]->next = NULL;
+	G[relationalop]->list[1] = getListNodeMemory(); 	 	
+	G[relationalop]->list[1]->s = TK_LE;
+ 	G[relationalop]->list[1]->next = NULL;
+	G[relationalop]->list[2] = getListNodeMemory(); 	 	
+	G[relationalop]->list[2]->s = TK_EQ;
+ 	G[relationalop]->list[2]->next = NULL;
+	G[relationalop]->list[3] = getListNodeMemory(); 	 	
+	G[relationalop]->list[3]->s = TK_GT;
+ 	G[relationalop]->list[3]->next = NULL;
+	G[relationalop]->list[4] = getListNodeMemory(); 	 	
+	G[relationalop]->list[4]->s = TK_GE;
+ 	G[relationalop]->list[4]->next = NULL;
+	G[relationalop]->list[5] = getListNodeMemory(); 	 	
+	G[relationalop]->list[5]->s = TK_NE;
+ 	G[relationalop]->list[5]->next = NULL;
+
+	/*returnstmt > TK_RETURN optionalreturn TK_SEM .*/
+
+	G[returnstmt] = malloc(sizeof(grammarNode));
+	G[returnstmt]->list = malloc(sizeof( listNode * ) * 1 );	
+ 	G[returnstmt]->list[0] = getListNodeMemory(); 	 	
+	G[returnstmt]->list[0]->s = TK_RETURN;
+ 	G[returnstmt]->list[0]->next = getListNodeMemory();
+	G[returnstmt]->list[0]->next->s = optionalreturn;
+ 	G[returnstmt]->list[0]->next->next = getListNodeMemory();
+ 	G[returnstmt]->list[0]->next->next->s = TK_SEM ;
+ 	G[returnstmt]->list[0]->next->next->next = NULL;
+
+	/*optionalreturn > TK_SQL idlist TK_SQR .
+	optionalreturn > eps .*/
+
+	G[optionalreturn] = malloc(sizeof(grammarNode));
+	G[optionalreturn]->list = malloc(sizeof( listNode * ) * 2 );
+	G[optionalreturn]->list[0] = getListNodeMemory(); 	 	
+	G[optionalreturn]->list[0]->s = TK_SQL;
+ 	G[optionalreturn]->list[0]->next = getListNodeMemory();
+ 	G[optionalreturn]->list[0]->next->s = idlist;
+ 	G[optionalreturn]->list[0]->next->next = getListNodeMemory();
+ 	G[optionalreturn]->list[0]->next->next->s = TK_SQR;
+ 	G[optionalreturn]->list[0]->next->next->next = NULL;
+	G[optionalreturn]->list[1] = getListNodeMemory(); 	 	
+	G[optionalreturn]->list[1]->s = TK_EPS;
+ 	G[optionalreturn]->list[1]->next = NULL;
+
+	/*idlist > TK_ID more_ids .*/
+	
+	G[idlist] = malloc(sizeof(grammarNode));
+	G[idlist]->list = malloc(sizeof( listNode * ) * 1 );
+	G[idlist]->list[0] = getListNodeMemory(); 	 	
+	G[idlist]->list[0]->s = TK_ID;
+ 	G[idlist]->list[0]->next = getListNodeMemory();
+ 	G[idlist]->list[0]->next->s = more_ids;
+ 	G[idlist]->list[0]->next->next = NULL;
+
+	/*more_ids > TK_COMMA idlist .
+	more_ids > eps .*/
+
+	G[more_ids] = malloc(sizeof(grammarNode));
+	G[more_ids]->list = malloc(sizeof( listNode * ) * 2 );
+	G[more_ids]->list[0] = getListNodeMemory(); 	 	
+	G[more_ids]->list[0]->s = TK_COMMA;
+ 	G[more_ids]->list[0]->next = getListNodeMemory();
+ 	G[more_ids]->list[0]->next->s =idlist;
+ 	G[more_ids]->list[0]->next->next = NULL;
+	G[more_ids]->list[1] = getListNodeMemory(); 	 	
+	G[more_ids]->list[1]->s = TK_EPS;
+ 	G[more_ids]->list[1]->next = NULL;
+	
+}
+
+listNode ** populateFirst( listNode ** First )
+{
+	First = (listNode **)malloc( (NUMBER_OF_NONTERMINALS + NUMBER_OF_TERMINALS) * sizeof(listNode *));
+
+	int i;	
+	for( i=0; i<(NUMBER_OF_NONTERMINALS + NUMBER_OF_TERMINALS); i++ )
+	{
+		First[i] = NULL;
+	}
+
+	First[TK_ASSIGNOP] = addSymbolToList( First[TK_ASSIGNOP], TK_ASSIGNOP );
+	First[TK_COMMENT] = addSymbolToList ( First[TK_COMMENT], TK_COMMENT]);
+	First[TK_FIELDID] = addSymbolToList( First[TK_FIELDID], TK_FIELDID );
+	First[TK_ID] = addSymbolToList( First[TK_ID], TK_ID );
+	First[TK_NUM] = addSymbolToList( First[TK_NUM], TK_NUM );
+	First[TK_RNUM] = addSymbolToList( First[TK_RNUM], TK_RNUM );
+	First[TK_FUNID] = addSymbolToList( First[TK_FUNID], TK_FUNID );
+	First[TK_RECORDID] = addSymbolToList( First[TK_RECORDID], TK_RECORDID );
+	First[TK_WITH] = addSymbolToList( First[TK_WITH], TK_WITH );
+	First[TK_PARAMETERS] = addSymbolToList( First[TK_PARAMETERS], TK_PARAMETERS );
+	First[TK_END] = addSymbolToList( First[TK_END], TK_END );
+	First[TK_WHILE] = addSymbolToList( First[TK_WHILE], TK_WHILE );
+	First[TK_INT] = addSymbolToList( First[TK_INT], TK_INT );
+	First[TK_REAL] = addSymbolToList( First[TK_REAL], TK_REAL );
+	First[TK_TYPE] = addSymbolToList( First[TK_TYPE], TK_TYPE );
+	First[TK_MAIN] = addSymbolToList( First[TK_MAIN], TK_MAIN );
+	First[TK_GLOBAL] = addSymbolToList( First[TK_GLOBAL], TK_GLOBAL );
+	First[TK_PARAMETER] = addSymbolToList( First[TK_PARAMETER], TK_PARAMETER );
+	First[TK_LIST] = addSymbolToList( First[TK_LIST], TK_LIST );
+	First[TK_SQL] = addSymbolToList( First[TK_SQL], TK_SQL );
+	First[TK_SQR] = addSymbolToList( First[TK_SQR], TK_SQR );
+	First[TK_INPUT] = addSymbolToList( First[TK_INPUT], TK_INPUT );
+	First[TK_OUTPUT] = addSymbolToList( First[TK_OUTPUT], TK_OUTPUT );
+	First[TK_SEM] = addSymbolToList( First[TK_SEM], TK_SEM );
+	First[TK_COLON] = addSymbolToList( First[TK_COLON], TK_COLON );
+	First[TK_DOT] = addSymbolToList( First[TK_DOT], TK_DOT );
+	First[TK_ENDWHILE] = addSymbolToList( First[TK_ENDWHILE], TK_ENDWHILE );
+	First[TK_OP] = addSymbolToList( First[TK_OP], TK_OP );
+	First[TK_CL] = addSymbolToList( First[TK_CL], TK_CL );
+	First[TK_IF] = addSymbolToList( First[TK_IF], TK_IF );
+	First[TK_THEN] = addSymbolToList( First[TK_THEN], TK_THEN );
+	First[TK_ENDIF] = addSymbolToList( First[TK_ENDIF], TK_ENDIF );
+	First[TK_READ] = addSymbolToList( First[TK_READ], TK_READ );
+	First[TK_WRITE] = addSymbolToList( First[TK_WRITE], TK_WRITE );
+	First[TK_RETURN] = addSymbolToList( First[TK_RETURN], TK_RETURN );
+	First[TK_PLUS] = addSymbolToList( First[TK_PLUS], TK_PLUS );
+	First[TK_MINUS] = addSymbolToList( First[TK_MINUS], TK_MINUS );
+	First[TK_MUL] = addSymbolToList( First[TK_MUL], TK_MUL );
+	First[TK_DIV] = addSymbolToList( First[TK_DIV], TK_DIV );
+	First[TK_CALL] = addSymbolToList( First[TK_CALL], TK_CALL );
+	First[TK_RECORD] = addSymbolToList( First[TK_RECORD], TK_RECORD );
+	First[TK_ENDRECORD] = addSymbolToList( First[TK_ENDRECORD], TK_RECORD );
+	First[TK_ELSE] = addSymbolToList( First[TK_ELSE], TK_ELSE );
+	First[TK_AND] = addSymbolToList( First[TK_AND], TK_AND );
+	First[TK_OR] = addSymbolToList( First[TK_OR], TK_OR );
+	First[TK_NOT] = addSymbolToList( First[TK_NOT], TK_NOT );
+	First[TK_LT] = addSymbolToList( First[TK_LT], TK_LT );
+	First[TK_LE] = addSymbolToList( First[TK_LE], TK_LE );
+	First[TK_EQ] = addSymbolToList( First[TK_EQ], TK_EQ );
+	First[TK_GT] = addSymbolToList( First[TK_GT], TK_GT );
+	First[TK_GE] = addSymbolToList( First[TK_GE], TK_GE );
+	First[TK_NE] = addSymbolToList( First[TK_NE], TK_NE );
+	First[TK_COMMA] = addSymbolToList( First[TK_COMMA], TK_COMMA );
+	First[TK_EPS] = addSymbolToList( First[TK_EPS], TK_EPS );
+	First[TK_DOLLAR] = addSymbolToList( First[TK_DOLLAR], TK_DOLLAR );
+	First[TK_ERROR] = addSymbolToList( First[TK_ERROR], TK_ERROR );
+	
+	First[program] = addSymbolToList( First[program], TK_FUNID );
+	First[program] = addSymbolToList( First[program], TK_MAIN );
+	First[mainfunction] = addSymbolToList( First[mainfunction], TK_MAIN );
+	First[otherfunctions] = addSymbolToList( First[otherfunctions], TK_FUNID );
+	First[otherfunctions] = addSymbolToList( First[otherfunctions], TK_EPS );
+	First[function] = addSymbolToList( First[fucntion], TK_FUNID );
+	First[input_par] = addSymbolToList( First[input_par], TK_INPUT );
+	First[output_par] = addSymbolToList( First[output_par], TK_OUTPUT );
+	First[output_par] = addSymbolToList( First[output_par], TK_EPS );
+	First[parameter_list] = addSymbolToList( First[parameter_list], TK_INT );
+	First[parameter_list] = addSymbolToList( First[parameter_list], TK_REAL );
+	First[parameter_list] = addSymbolToList( First[parameter_list], TK_RECORD );
+	First[datatype] = addSymbolToList( First[datatype], TK_INT );
+	First[datatype] = addSymbolToList( First[datatype], TK_REAL );
+	First[datatype] = addSymbolToList( First[datatype], TK_RECORD );
+	First[primitivedatatype] = addSymbolToList( First[primitivedatatype], TK_INT );
+	First[primitivedatatype] = addSymbolToList( First[primitivedatatype], TK_REAL );
+	First[constructeddatatype] = addSymbolToList( First[constructeddatatype], TK_RECORD );
+	First[remaining_list] = addSymbolToList( First[remaining_list], TK_COMMA );
+	First[remaining_list] = addSymbolToList( First[remaining_list], TK_EPS );
+	First[stmts] = addSymbolToList( First[stmts], TK_RECORD );
+	First[stmts] = addSymbolToList( First[stmts], TK_TYPE );
+	First[stmts] = addSymbolToList( First[stmts], TK_ID );
+	First[stmts] = addSymbolToList( First[stmts], TK_RECORDID );
+	First[stmts] = addSymbolToList( First[stmts], TK_WHILE );
+	First[stmts] = addSymbolToList( First[stmts], TK_IF );
+	First[stmts] = addSymbolToList( First[stmts], TK_READ );
+	First[stmts] = addSymbolToList( First[stmts], TK_SQL );
+	First[stmts] = addSymbolToList( First[stmts], TK_CALL );
+	First[stmts] = addSymbolToList( First[stmts], TK_RETURN );
+	First[stmts] = addSymbolToList( First[stmts], TK_WRITE );
+	First[typedefintions] = addSymbolToList( First[typedefintions], TK_EPS );
+	First[typedefintions] = addSymbolToList( First[typedefintions], TK_RECORD );
+	First[typedefintion] = addSymbolToList( First[typedefintion], TK_RECORD );
+	First[fielddefintions] = addSymbolToList( First[fielddefintions], TK_TYPE );
+	First[fielddefintion] = addSymbolToList( First[fielddefintion], TK_TYPE );
+	First[morefields] = addSymbolToList( First[morefields], TK_TYPE );
+	First[morefields] = addSymbolToList( First[morefields], TK_EPS );
+	First[declarations] = addSymbolToList( First[declarations], TK_TYPE );
+	First[declarations] = addSymbolToList( First[declarations], TK_EPS );
+	First[declaration] = addSymbolToList( First[declaration], TK_TYPE );
+	First[global_or_not] = addSymbolToList( First[global_or_not], TK_COLON );
+	First[otherstmts] = addSymbolToList( First[otherstmts], TK_ID );
+	First[otherstmts] = addSymbolToList( First[otherstmts], TK_RECORDID );
+	First[otherstmts] = addSymbolToList( First[otherstmts], TK_WHILE );
+	First[otherstmts] = addSymbolToList( First[otherstmts], TK_IF );
+	First[otherstmts] = addSymbolToList( First[otherstmts], TK_READ );
+	First[otherstmts] = addSymbolToList( First[otherstmts], TK_WHILE );
+	First[otherstmts] = addSymbolToList( First[otherstmts], TK_SQL );
+	First[otherstmts] = addSymbolToList( First[otherstmts], TK_CALL );
+	First[otherstmts] = addSymbolToList( First[otherstmts], TK_EPS );
+	First[stmts] = addSymbolToList( First[stmts], TK_ID );
+	First[stmts] = addSymbolToList( First[stmts], TK_RECORDID );
+	First[stmts] = addSymbolToList( First[stmts], TK_WHILE );
+	First[stmts] = addSymbolToList( First[stmts], TK_IF );
+	First[stmts] = addSymbolToList( First[stmts], TK_READ );
+	First[stmts] = addSymbolToList( First[stmts], TK_WHILE );
+	First[stmts] = addSymbolToList( First[stmts], TK_SQL );
+	First[stmts] = addSymbolToList( First[stmts], TK_CALL );
+	First[assignmentstmt] = addSymbolToList( First[assignementstmt], TK_ID );
+	First[assignmentstmt] = addSymbolToList( First[assignementstmt], TK_RECORDID );
+	First[singleorrecid] = addSymbolToList( First[singleorrecid], TK_ID );
+	First[newstate] = addSymbolToList( First[newstate], TK_DOT );
+	First[newstate] = addSymbolToList( First[newstate], TK_EPS );
+	First[funcallstmt] = addSymbolToList( First[funcallstmt], TK_SQL );
+	First[funcallstmt] = addSymbolToList( First[funcallstmt], TK_CALL );
+	First[outputparameters] = addSymbolToList( First[outputparameters], TK_EPS );
+	First[outputparameters] = addSymbolToList( First[outputparameters], TK_SQL );
+	First[inputparameters] = addSymbolToList( First[inputparameters], TK_SQL );
+	First[iterativestmt] = addSymbolToList( First[iterativestmt], TK_WHILE );
+	First[conditionalstmt] = addSymbolToList( First[conditionalstmt], TK_IF );
+	First[elsepart] = addSymbolToList( First[elsepart], TK_ELSE );
+	First[elsepart] = addSymbolToList( First[elsepart], TK_ENDIF );
+	First[iostmt] = addSymbolToList( First[iostmt], TK_READ );
+	First[iostmt] = addSymbolToList( First[iostmt], TK_WRITE );
+	First[allvar] = addSymbolToList( First[allvar], TK_ID );
+	First[allvar] = addSymbolToList( First[allvar], TK_RNUM );
+	First[allvar] = addSymbolToList( First[allvar], TK_NUM );
+	First[arithmeticexpression] = addSymbolToList( First[arithmeticexpression], TK_ID );
+	First[arithmeticexpression] = addSymbolToList( First[arithmeticexpression], TK_NUM );
+	First[arithmeticexpression] = addSymbolToList( First[arithmeticexpression], TK_RNUM );
+	First[arithmeticexpression] = addSymbolToList( First[arithmeticexpression], TK_RECORDID );
+	First[arithmeticexpression] = addSymbolToList( First[arithmeticexpression], TK_OP );
+	First[expprime] = addSymbolToList( First[expprime], TK_PLUS );
+	First[expprime] = addSymbolToList( First[expprime], TK_MINUS );
+	First[term] = addSymbolToList( First[term], TK_ID );
+	First[term] = addSymbolToList( First[term], TK_NUM );
+	First[term] = addSymbolToList( First[term], TK_RNUM );
+	First[term] = addSymbolToList( First[term], TK_RECORDID );
+	First[term] = addSymbolToList( First[term], TK_OP );
+	First[termprime] = addSymbolToList( First[termprime], TK_MUL );
+	First[termprime] = addSymbolToList( First[termprime], TK_DIV );
+	First[factor] = addSymbolToList( First[factor], TK_ID );
+	First[factor] = addSymbolToList( First[factor], TK_NUM );
+	First[factor] = addSymbolToList( First[factor], TK_RNUM );
+	First[factor] = addSymbolToList( First[factor], TK_RECORDID );
+	First[factor] = addSymbolToList( First[factor], TK_OP );
+	First[highprecendenceoperators] = addSymbolToList( First[highprecedenceoperators], TK_MUL );
+	First[highprecendenceoperators] = addSymbolToList( First[highprecedenceoperators], TK_DIV );
+	First[lowprecendenceoperators] = addSymbolToList( First[lowprecedenceoperators], TK_PLUS );
+	First[lowprecendenceoperators] = addSymbolToList( First[lowprecedenceoperators], TK_MINUS );
+	First[all] = addSymbolToList( First[all], TK_NUM );
+	First[all] = addSymbolToList( First[all], TK_RNUM );
+	First[all] = addSymbolToList( First[all], TK_ID );
+	First[all2] = addSymbolToList( First[all2], TK_EPS );
+	First[all2] = addSymbolToList( First[all2], TK_DOT );
+	First[temp] = addSymbolToList( First[temp], TK_EPS );
+	First[temp] = addSymbolToList( First[temp], TK_DOT );
+	First[booleanexpression] = addSymbolToList( First[booleanexpression], TK_OP );
+	First[booleanexpression] = addSymbolToList( First[booleanexpression], TK_ID );
+	First[booleanexpression] = addSymbolToList( First[booleanexpression], TK_NUM );
+	First[booleanexpression] = addSymbolToList( First[booleanexpression], TK_RNUM );
+	First[booleanexpression] = addSymbolToList( First[booleanexpression], TK_NOT );
+	First[var] = addSymbolToList( First[var], TK_ID );
+	First[var] = addSymbolToList( First[var], TK_NUM );
+	First[var] = addSymbolToList( First[var], TK_RNUM );
+	First[logicalop] = addSymbolToList( First[logicalop], TK_AND );
+	First[logicalop] = addSymbolToList( First[logicalop], TK_OR );
+	First[relationalop] = addSymbolToList( First[relationalop], TK_LT );
+	First[relationalop] = addSymbolToList( First[relationalop], TK_LE );
+	First[relationalop] = addSymbolToList( First[relationalop], TK_EQ );
+	First[relationalop] = addSymbolToList( First[relationalop], TK_GT );
+	First[relationalop] = addSymbolToList( First[relationalop], TK_GE );
+	First[relationalop] = addSymbolToList( First[relationalop], TK_NE );
+	First[returnstmt] = addSymbolToList( First[returnstmt], TK_RETURN );
+	First[optionalreturn] = addSymbolToList( First[optionalreturn], TK_SQL );
+	First[idlist] = addSymbolToList( First[idlist], TK_ID );
+	First[more_ids] = addSymbolToList( First[more_ids], TK_COMMA );
+	return First;
+}
+
+listNode ** populateFollow( listNode ** Follow )
+{
+	Follow = (listNode **)malloc( (NUMBER_OF_NONTERMINALS + NUMBER_OF_TERMINALS) * sizeof(listNode *));
+
+	int i;	
+	for( i=0; i<(NUMBER_OF_NONTERMINALS + NUMBER_OF_TERMINALS); i++ )
+	{
+		Follow[i] = NULL;
+	}
+
+	Follow[program] = addSymbolToList( Follow[program], TK_DOLLAR );
+	Follow[mainfunction] = addSymbolToList( Follow[mainfunction], TK_DOLLAR );
+	Follow[otherfunction] = addSymbolToList( Follow[otherfunction], TK_MAIN );
+	Follow[function] = addSymbolToList( Follow[function], TK_FUNID );
+	Follow[function] = addSymbolToList( Follow[function], TK_MAIN );
+	Follow[input_par] = addSymbolToList( Follow[input_par], TK_OUTPUT );
+	Follow[input_par] = addSymbolToList( Follow[input_par], TK_SEM );
+	Follow[output_par] = addSymbolToList( Follow[output_par], TK_SEM );
+	Follow[parameter_list] = addSymbolToList( Follow[parameter_list], TK_SQR );
+	Follow[datatype] = addSymbolToList( Follow[datatype], TK_ID );
+	Follow[datatype] = addSymbolToList( Follow[datatype], TK_COLON );
+	Follow[primitivedatatype] = addSymbolToList( Follow[primitivedatatype], TK_ID );
+	Follow[primitivedatatype] = addSymbolToList( Follow[primitivedatatype], TK_COLON );
+	Follow[constructeddatatype] = addSymbolToList( Follow[constructeddatatype], TK_ID );
+	Follow[constructeddatatype] = addSymbolToList( Follow[constructeddatatype], TK_COLON );
+	Follow[remaining_list] = addSymbolToList( Follow[remaining_list], TK_SQR );
+	Follow[stmts] = addSymbolToList( Follow[stmts], TK_END );
+	Follow[typedefinitions] = addSymbolToList( Follow[typedefintions], TK_TYPE );
+	Follow[typedefinitions] = addSymbolToList( Follow[typedefintions], TK_ID );
+	Follow[typedefinitions] = addSymbolToList( Follow[typedefintions], TK_RECORDID );
+	Follow[typedefinitions] = addSymbolToList( Follow[typedefintions], TK_WHILE );
+	Follow[typedefinitions] = addSymbolToList( Follow[typedefintions], TK_IF );
+	Follow[typedefinitions] = addSymbolToList( Follow[typedefintions], TK_READ );
+	Follow[typedefinitions] = addSymbolToList( Follow[typedefintions], TK_WRITE );
+	Follow[typedefinitions] = addSymbolToList( Follow[typedefintions], TK_SQL );
+	Follow[typedefinitions] = addSymbolToList( Follow[typedefintions], TK_CALL );
+	Follow[typedefinition] = addSymbolToList( Follow[typedefintion], TK_RECORD );
+	Follow[typedefinition] = addSymbolToList( Follow[typedefintion], TK_TYPE );
+	Follow[typedefinition] = addSymbolToList( Follow[typedefintion], TK_ID );
+	Follow[typedefinition] = addSymbolToList( Follow[typedefintion], TK_RECORDID );
+	Follow[typedefinition] = addSymbolToList( Follow[typedefintion], TK_WHILE );
+	Follow[typedefinition] = addSymbolToList( Follow[typedefintion], TK_IF );
+	Follow[typedefinition] = addSymbolToList( Follow[typedefintion], TK_READ );
+	Follow[typedefinition] = addSymbolToList( Follow[typedefintion], TK_WRITE );
+	Follow[typedefinition] = addSymbolToList( Follow[typedefintion], TK_SQL );
+	Follow[typedefinition] = addSymbolToList( Follow[typedefintion], TK_CALL );
+	Follow[fielddefinitions] = addSymbolToList( Follow[fielddefinitions], TK_ENDRECORD );
+	Follow[fielddefinition] = addSymbolToList( Follow[fielddefinition], TK_TYPE );
+	Follow[fielddefinition] = addSymbolToList( Follow[fielddefinition], TK_ENDRECORD );
+	Follow[morefields] = addSymbolToList( Follow[program], TK_ENDRECORD );
+	Follow[declarations] = addSymbolToList( Follow[declarations], TK_ID );
+	Follow[declarations] = addSymbolToList( Follow[declarations], TK_RECORDID );
+	Follow[declarations] = addSymbolToList( Follow[declarations], TK_WHILE );
+	Follow[declarations] = addSymbolToList( Follow[declarations], TK_IF );
+	Follow[declarations] = addSymbolToList( Follow[declarations], TK_READ );
+	Follow[declarations] = addSymbolToList( Follow[declarations], TK_WRITE );
+	Follow[declarations] = addSymbolToList( Follow[declarations], TK_SQL );
+	Follow[declarations] = addSymbolToList( Follow[declarations], TK_CALL );
+	Follow[declarations] = addSymbolToList( Follow[declarations], TK_RETURN );
+	Follow[declaration] = addSymbolToList( Follow[declaration], TK_TYPE );
+	Follow[declaration] = addSymbolToList( Follow[declaration], TK_ID );
+	Follow[declaration] = addSymbolToList( Follow[declaration], TK_RECORDID );
+	Follow[declaration] = addSymbolToList( Follow[declaration], TK_WHILE );
+	Follow[declaration] = addSymbolToList( Follow[declaration], TK_IF );
+	Follow[declaration] = addSymbolToList( Follow[declaration], TK_READ );
+	Follow[declaration] = addSymbolToList( Follow[declaration], TK_WRITE );
+	Follow[declaration] = addSymbolToList( Follow[declaration], TK_SQL );
+	Follow[declaration] = addSymbolToList( Follow[declaration], TK_CALL );
+	Follow[declaration] = addSymbolToList( Follow[declaration], TK_RETURN );
+	Follow[global_or_not] = addSymbolToList( Follow[global_or_not], TK_SEM );
+	Follow[otherstmts] = addSymbolToList( Follow[otherstmts], TK_RETURN );
+	Follow[otherstmts] = addSymbolToList( Follow[otherstmts], TK_ENDIF );
+	Follow[otherstmts] = addSymbolToList( Follow[otherstmts], TK_ENDWHILE );
+	Follow[otherstmts] = addSymbolToList( Follow[otherstmts], TK_ELSE );
+	Follow[stmt] = addSymbolToList( Follow[stmt], TK_ID );
+	Follow[stmt] = addSymbolToList( Follow[stmt], TK_RECORDID );
+	Follow[stmt] = addSymbolToList( Follow[stmt], TK_WHILE );
+	Follow[stmt] = addSymbolToList( Follow[stmt], TK_IF );
+	Follow[stmt] = addSymbolToList( Follow[stmt], TK_READ );
+	Follow[stmt] = addSymbolToList( Follow[stmt], TK_WRITE );
+	Follow[stmt] = addSymbolToList( Follow[stmt], TK_SQL );
+
+	Follow[assignmentstmt] = addSymbolToList( Follow[assignmentstmt], TK_ID );
+	Follow[assignmentstmt] = addSymbolToList( Follow[assignmentstmt], TK_RECORDID );
+	Follow[assignmentstmt] = addSymbolToList( Follow[assignmentstmt], TK_WHILE );
+	Follow[assignmentstmt] = addSymbolToList( Follow[assignmentstmt], TK_IF );
+	Follow[assignmentstmt] = addSymbolToList( Follow[assignmentstmt], TK_READ );
+	Follow[assignmentstmt] = addSymbolToList( Follow[assignmentstmt], TK_WRITE );
+	Follow[assignmentstmt] = addSymbolToList( Follow[assignmentstmt], TK_SQL );
+	Follow[assignmentstmt] = addSymbolToList( Follow[assignmentstmt], TK_CALL );
+	Follow[assignmentstmt] = addSymbolToList( Follow[assignmentstmt], TK_RETURN );
+	Follow[assignmentstmt] = addSymbolToList( Follow[assignmentstmt], TK_ENDIF );
+	Follow[assignmentstmt] = addSymbolToList( Follow[assignmentstmt], TK_ENDWHILE );
+	Follow[assignmentstmt] = addSymbolToList( Follow[assignmentstmt], TK_ELSE );
+	Follow[singleorrecid] = addSymbolToList( Follow[singleorrecid], TK_ASSIGNOP );
+	// add follow for newstate
+	
+	Follow[funcallstmt] = addSymbolToList( Follow[funcallstmt], TK_ID );
+	Follow[funcallstmt] = addSymbolToList( Follow[funcallstmt], TK_RECORDID );
+	Follow[funcallstmt] = addSymbolToList( Follow[funcallstmt], TK_WHILE );
+	Follow[funcallstmt] = addSymbolToList( Follow[funcallstmt], TK_IF );
+	Follow[funcallstmt] = addSymbolToList( Follow[funcallstmt], TK_READ );
+	Follow[funcallstmt] = addSymbolToList( Follow[funcallstmt], TK_WRITE );
+	Follow[funcallstmt] = addSymbolToList( Follow[funcallstmt], TK_SQL );
+	Follow[funcallstmt] = addSymbolToList( Follow[funcallstmt], TK_CALL );
+	Follow[funcallstmt] = addSymbolToList( Follow[funcallstmt], TK_RETURN );
+	Follow[funcallstmt] = addSymbolToList( Follow[funcallstmt], TK_ENDIF );
+	Follow[funcallstmt] = addSymbolToList( Follow[funcallstmt], TK_ENDWHILE );
+	Follow[funcallstmt] = addSymbolToList( Follow[funcallstmt], TK_ELSE );
+	Follow[outputparameters] = addSymbolToList( Follow[outputparameters], TK_CALL );
+	Follow[inputparameters] = addSymbolToList( Follow[inputparameters], TK_ID );
+	Follow[inputparameters] = addSymbolToList( Follow[inputparameters], TK_RECORDID );
+	Follow[inputparameters] = addSymbolToList( Follow[inputparameters], TK_WHILE );
+	Follow[inputparameters] = addSymbolToList( Follow[inputparameters], TK_IF );
+	Follow[inputparameters] = addSymbolToList( Follow[inputparameters], TK_READ );
+	Follow[inputparameters] = addSymbolToList( Follow[inputparameters], TK_WRITE );
+	Follow[inputparameters] = addSymbolToList( Follow[inputparameters], TK_SQL );
+	Follow[inputparameters] = addSymbolToList( Follow[inputparameters], TK_CALL );
+	Follow[inputparameters] = addSymbolToList( Follow[inputparameters], TK_RETURN );
+	Follow[inputparameters] = addSymbolToList( Follow[inputparameters], TK_ENDIF );
+	Follow[inputparameters] = addSymbolToList( Follow[inputparameters], TK_ENDWHILE );
+	Follow[inputparameters] = addSymbolToList( Follow[inputparameters], TK_ELSE );
+	Follow[iterativestmt] = addSymbolToList( Follow[iterativestmt], TK_ID );
+	Follow[iterativestmt] = addSymbolToList( Follow[iterativestmt], TK_RECORDID );
+	Follow[iterativestmt] = addSymbolToList( Follow[iterativestmt], TK_WHILE );
+	Follow[iterativestmt] = addSymbolToList( Follow[iterativestmt], TK_IF );
+	Follow[iterativestmt] = addSymbolToList( Follow[iterativestmt], TK_READ );
+	Follow[iterativestmt] = addSymbolToList( Follow[iterativestmt], TK_WRITE );
+	Follow[iterativestmt] = addSymbolToList( Follow[iterativestmt], TK_SQL );
+	Follow[iterativestmt] = addSymbolToList( Follow[iterativestmt], TK_CALL );
+	Follow[iterativestmt] = addSymbolToList( Follow[iterativestmt], TK_RETURN );
+	Follow[iterativestmt] = addSymbolToList( Follow[iterativestmt], TK_ENDIF );
+	Follow[iterativestmt] = addSymbolToList( Follow[iterativestmt], TK_ENDWHILE );
+	Follow[iterativestmt] = addSymbolToList( Follow[iterativestmt], TK_ELSE );
+	Follow[conditionalstmt] = addSymbolToList( Follow[conditionalstmt], TK_ID );
+	Follow[conditionalstmt] = addSymbolToList( Follow[conditionalstmt], TK_RECORDID );
+	Follow[conditionalstmt] = addSymbolToList( Follow[conditionalstmt], TK_WHILE );
+	Follow[conditionalstmt] = addSymbolToList( Follow[conditionalstmt], TK_IF );
+	Follow[conditionalstmt] = addSymbolToList( Follow[conditionalstmt], TK_READ );
+	Follow[conditionalstmt] = addSymbolToList( Follow[conditionalstmt], TK_WRITE );
+	Follow[conditionalstmt] = addSymbolToList( Follow[conditionalstmt], TK_SQL );
+	Follow[conditionalstmt] = addSymbolToList( Follow[conditionalstmt], TK_CALL );
+	Follow[conditionalstmt] = addSymbolToList( Follow[conditionalstmt], TK_RETURN );
+	Follow[conditionalstmt] = addSymbolToList( Follow[conditionalstmt], TK_ENDIF );
+	Follow[conditionalstmt] = addSymbolToList( Follow[conditionalstmt], TK_ENDWHILE );
+	Follow[conditionalstmt] = addSymbolToList( Follow[conditionalstmt], TK_ELSE );
+	Follow[elsepart] = addSymbolToList( Follow[elsepart], TK_ID );
+	Follow[elsepart] = addSymbolToList( Follow[elsepart], TK_RECORDID );
+	Follow[elsepart] = addSymbolToList( Follow[elsepart], TK_WHILE );
+	Follow[elsepart] = addSymbolToList( Follow[elsepart], TK_IF );
+	Follow[elsepart] = addSymbolToList( Follow[elsepart], TK_READ );
+	Follow[elsepart] = addSymbolToList( Follow[elsepart], TK_WRITE );
+	Follow[elsepart] = addSymbolToList( Follow[elsepart], TK_SQL );
+	Follow[elsepart] = addSymbolToList( Follow[elsepart], TK_CALL );
+	Follow[elsepart] = addSymbolToList( Follow[elsepart], TK_RETURN );
+	Follow[elsepart] = addSymbolToList( Follow[elsepart], TK_ENDIF );
+	Follow[elsepart] = addSymbolToList( Follow[elsepart], TK_ENDWHILE );
+	Follow[elsepart] = addSymbolToList( Follow[elsepart], TK_ELSE );
+	Follow[iostmt] = addSymbolToList( Follow[iostmt], TK_ID );
+	Follow[iostmt] = addSymbolToList( Follow[iostmt], TK_RECORDID );
+	Follow[iostmt] = addSymbolToList( Follow[iostmt], TK_WHILE );
+	Follow[iostmt] = addSymbolToList( Follow[iostmt], TK_IF );
+	Follow[iostmt] = addSymbolToList( Follow[iostmt], TK_READ );
+	Follow[iostmt] = addSymbolToList( Follow[iostmt], TK_WRITE );
+	Follow[iostmt] = addSymbolToList( Follow[iostmt], TK_SQL );
+	Follow[iostmt] = addSymbolToList( Follow[iostmt], TK_CALL );
+	Follow[iostmt] = addSymbolToList( Follow[iostmt], TK_RETURN );
+	Follow[iostmt] = addSymbolToList( Follow[iostmt], TK_ENDIF );
+	Follow[iostmt] = addSymbolToList( Follow[iostmt], TK_ENDWHILE );
+	Follow[iostmt] = addSymbolToList( Follow[iostmt], TK_ELSE );
+	Follow[allvar] = addSymbolToList( Follow[allvar], TK_CL );
+	// write follow of arithmeticexpression
+	Follow[expprime] = addSymbolToList( Follow[expprime], TK_SEM );
+	// write follow of term
+	Follow[termprime] = addSymbolToList( Follow[termprime], TK_PLUS );
+	Follow[termprime] = addSymbolToList( Follow[termprime], TK_MINUS );
+	Follow[termprime] = addSymbolToList( Follow[termprime], TK_SEM );
+	// write follow of factor, HPO, LPO, all, all2
+	Follow[temp] = addSymbolToList( Follow[temp], TK_MUL );
+	Follow[temp] = addSymbolToList( Follow[temp], TK_DIV );
+	Follow[temp] = addSymbolToList( Follow[temp], TK_PLUS );
+	Follow[temp] = addSymbolToList( Follow[temp], TK_MINUS );
+	Follow[temp] = addSymbolToList( Follow[temp], TK_SEM );
+	Follow[booleanexpression] = addSymbolToList( Follow[booleanexpression], TK_CL );
+	Follow[booleanexpression] = addSymbolToList( Follow[booleanexpression], TK_THEN );
+	Follow[var] = addSymbolToList( Follow[var], TK_LT );
+	Follow[var] = addSymbolToList( Follow[var], TK_LE );
+	Follow[var] = addSymbolToList( Follow[var], TK_EQ );
+	Follow[var] = addSymbolToList( Follow[var], TK_GT );
+	Follow[var] = addSymbolToList( Follow[var], TK_GE );
+	Follow[var] = addSymbolToList( Follow[var], TK_NE );
+	Follow[var] = addSymbolToList( Follow[var], TK_CL );
+	Follow[logicalop] = addSymbolToList( Follow[logicalop], TK_OP );
+	Follow[relationalop] = addSymbolToList( Follow[relationalop], TK_ID );
+	Follow[relationalop] = addSymbolToList( Follow[relationalop], TK_NUM );
+	Follow[relationalop] = addSymbolToList( Follow[relationalop], TK_RNUM );
+	Follow[returnstmt] = addSymbolToList( Follow[returnstmt], TK_END );
+	Follow[optionalreturn] = addSymbolToList( Follow[optionalreturn], TK_SEM );
+	Follow[idlist] = addSymbolToList( Follow[idlist], TK_SQR );
+	Follow[more_ids] = addSymbolToList( Follow[more_ids], TK_SQR );
+	return Follow;
+}
+
+listNode *  addSymbolToList( listNode * node, symbol s)
+{
+	if( node == NULL )
+	{
+		node = getListNodeMemory();
+		node->s = s;
+		node->next = NULL;
+	}
+	else
+	{
+		while( node->next != NULL )
+		{
+			node = node->next;
+		}
+		node->next = getListNodeMemory();
+		node->next->s = s;
+		node->next->next = NULL;
+	}
+	return node;
+}
+
+listNode * getEpsilonNode(listNode * epsilonNode)
+{
+	epsilonNode = getListNodeMemory();
+	epsilonNode->s = TK_EPS;
+	epsilonNode->next = NULL;
+	return epsilonNode;
+}
+
+/*
+void createParseTable(grammar G, table T): 
+
+This function takes as input the grammar G, uses FIRST and FOLLOW information to populate  the table T appropriately. 
+*/
+void createParseTable(grammar G, table T)
+{
+	/*If I have the grammar here, where do I pupulate it?*/
+	populateGrammar(G);
+	
+	/*data structure to hold first and follow sets */
+	listNode ** First;
+	listNode ** Follow;
+
+	/*populating first and follow sets*/
+	First = populateFirst( First );
+	Follow = populateFollow( Follow );
+	
+	/*get epsilonNode, since this can also be a part of the parse Table*/
+	listNode * epsilonNode;
+	epsilonNode = getEpsilonNode(epsilonNode);
+
+	int tableRows = NUMBER_OF_NONTERMINALS;
+	int tableColumns = NUMBER_OF_TERMINALS + 1;	/* plus 1 for the dollar sign*/
+	
+	T = (table)malloc(tableRows * sizeof( listNode** ));
+    	/*can experiment here a little with dereferencing*/
+	
+	int i,j;
+	for( i=0; i<tableRows ; i++)
+	{
+         	T[i] = ( listNode** )malloc(tableColumns * sizeof( listNode* ));
+ 	}
+	
+	/*make all entries of the table as NULL*/
+	for( i=0; i<tableRows ; i++)
+	{
+		for( j=0; j<tableColumns ; j++)
+		{
+         		T[i][j] = NULL;
+		}
+ 	}
+
+	
+	/*see if the function should modify pointer or return the modified pointer as well!!*/
+}
+
+/*
+
+parseTree  parseInputSourceCode(char *testcaseFile, table T): 
+
+This function takes as input the source code file and parses using the rules as per the predictive parse table T. The function gets the tokens using lexical analysis interface and establishes the syntactic structure of the input source code using rules in T. The function must report errors as per the list of error specifications (will be provided to you soon) if the source code is syntactically incorrect. If the source code is correct then the token and all its relevant information is added to the parse tree. The start symbol of the grammar is the root of the parse tree and the tree grows as the syntax analysis moves in top down way. The function must display a message " Compiled Successfully: Input source code is syntactically correct!!" for successful parsing.
+
+*/
+
+/*
+
+void printParseTree(parseTree  PT, char *outfile): 
+
+function provides an interface for observing the correctness of the creation of parse tree. The function prints the parse tree in depth first order in the file outfile. The output is such that each line of the file outfile must contain the information corresponding to the currently  visited node of the parse tree in the following format 
+
+             lexemeCurrentNode     lineno   token   valueIfNumber   parentNodeSymbol   isLeafNode(yes/no)    NodeSymbol
+
+    The lexeme of the current node is printed when it is the leaf node else a dummy string of characters "----" is printed. The line number is the information collected by the lexical analyzer during single pass of the source code. The token name corresponding to the current node is printed third. If the lexeme is an integer or real number, then its value computed by the lexical analyzer should be printed at the fourth place. Print the grammar symbol (non terminal symbol) of the parent node of the currently visited node appropriately at fifth place (for the root node  print ROOT for parent symbol) . The sixth column is for printing yes or no appropriately. Print the nonterminal symbol of the node being currently visited at the 7th place, if the node is not the leaf node [Print the actual nonterminal symbol and not the enumerated values for the nonterminal]. Ensure appropriate justification so that the columns appear neat and straight.*/
+

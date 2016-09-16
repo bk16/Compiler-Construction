@@ -1,0 +1,171 @@
+T[all][TK_ID] : TK_ID  singleorrecid_  
+T[all][TK_NUM] : TK_NUM  
+T[all][TK_RNUM] : TK_RNUM  
+T[allvar][TK_ID] : var  
+T[allvar][TK_NUM] : var  
+T[allvar][TK_RECORDID] : TK_RECORDID  TK_DOT  TK_FIELDID  
+T[allvar][TK_RNUM] : var  
+T[arithmeticexpression][TK_ID] : term  innerterm  
+T[arithmeticexpression][TK_NUM] : term  innerterm  
+T[arithmeticexpression][TK_OP] : term  innerterm  
+T[arithmeticexpression][TK_RECORDID] : term  innerterm  
+T[arithmeticexpression][TK_RNUM] : term  innerterm  
+T[assignmentstmt][TK_ID] : singleorrecid  TK_ASSIGNOP  arithmeticexpression  TK_SEM  
+T[booleanexpression][TK_ID] : var  relationalop  var  
+T[booleanexpression][TK_NUM] : var  relationalop  var  
+T[booleanexpression][TK_NOT] : TK_NOT  TK_OP  booleanexpression  TK_CL  
+T[booleanexpression][TK_OP] : TK_OP  booleanexpression  TK_CL  logicalop  TK_OP  booleanexpression  TK_CL  
+T[booleanexpression][TK_RNUM] : var  relationalop  var  
+T[conditionalstmt][TK_IF] : TK_IF  TK_OP  booleanexpression  TK_CL  TK_THEN  stmt  otherstmts  elsepart  
+T[constructeddatatype][TK_RECORD] : TK_RECORD  TK_RECORDID  
+T[datatype][TK_INT] : primitivedatatype  
+T[datatype][TK_REAL] : primitivedatatype  
+T[datatype][TK_RECORD] : constructeddatatype  
+T[declaration][TK_TYPE] : TK_TYPE  datatype  TK_COLON  TK_ID  global_or_not  TK_SEM  
+T[declarations][TK_CALL] : TK_EPS  
+T[declarations][TK_ID] : TK_EPS  
+T[declarations][TK_IF] : TK_EPS  
+T[declarations][TK_READ] : TK_EPS  
+T[declarations][TK_RETURN] : TK_EPS  
+T[declarations][TK_SQL] : TK_EPS  
+T[declarations][TK_TYPE] : declaration  declarations  
+T[declarations][TK_WHILE] : TK_EPS  
+T[declarations][TK_WRITE] : TK_EPS  
+T[elsepart][TK_ELSE] : TK_ELSE  stmt  otherstmts  TK_ENDIF  
+T[elsepart][TK_ENDIF] : TK_ENDIF  
+T[factor][TK_ID] : all  
+T[factor][TK_NUM] : all  
+T[factor][TK_OP] : TK_OP  arithmeticexpression  TK_CL  
+T[factor][TK_RECORDID] : all  
+T[factor][TK_RNUM] : all  
+T[fielddefinition][TK_TYPE] : TK_TYPE  primitivedatatype  TK_COLON  TK_FIELDID  TK_SEM  
+T[fielddefinitions][TK_TYPE] : fielddefinition  fielddefinition  morefields  
+T[funcallstmt][TK_CALL] : outputparameters  TK_CALL  TK_FUNID  TK_WITH  TK_PARAMETERS  inputparameters  TK_SEM  
+T[funcallstmt][TK_ENDWHILE] : outputparameters  TK_CALL  TK_FUNID  TK_WITH  TK_PARAMETERS  inputparameters  TK_SEM  
+T[funcallstmt][TK_ELSE] : outputparameters  TK_CALL  TK_FUNID  TK_WITH  TK_PARAMETERS  inputparameters  TK_SEM  
+T[funcallstmt][TK_ENDIF] : outputparameters  TK_CALL  TK_FUNID  TK_WITH  TK_PARAMETERS  inputparameters  TK_SEM  
+T[funcallstmt][TK_ID] : outputparameters  TK_CALL  TK_FUNID  TK_WITH  TK_PARAMETERS  inputparameters  TK_SEM  
+T[funcallstmt][TK_IF] : outputparameters  TK_CALL  TK_FUNID  TK_WITH  TK_PARAMETERS  inputparameters  TK_SEM  
+T[funcallstmt][TK_READ] : outputparameters  TK_CALL  TK_FUNID  TK_WITH  TK_PARAMETERS  inputparameters  TK_SEM  
+T[funcallstmt][TK_RETURN] : outputparameters  TK_CALL  TK_FUNID  TK_WITH  TK_PARAMETERS  inputparameters  TK_SEM  
+T[funcallstmt][TK_SQL] : outputparameters  TK_CALL  TK_FUNID  TK_WITH  TK_PARAMETERS  inputparameters  TK_SEM  
+T[funcallstmt][TK_WHILE] : outputparameters  TK_CALL  TK_FUNID  TK_WITH  TK_PARAMETERS  inputparameters  TK_SEM  
+T[funcallstmt][TK_WRITE] : outputparameters  TK_CALL  TK_FUNID  TK_WITH  TK_PARAMETERS  inputparameters  TK_SEM  
+T[function][TK_FUNID] : TK_FUNID  input_par  output_par  TK_SEM  stmts  TK_END  
+T[global_or_not][TK_COLON] : TK_COLON  TK_GLOBAL  
+T[global_or_not][TK_SEM] : TK_EPS  
+T[idlist][TK_ID] : TK_ID  more_ids  
+T[innerterm][TK_CL] : TK_EPS  
+T[innerterm][TK_MINUS] : plusminus  term  innerterm  
+T[innerterm][TK_PLUS] : plusminus  term  innerterm  
+T[innerterm][TK_SEM] : TK_EPS  
+T[input_par][TK_INPUT] : TK_INPUT  TK_PARAMETER  TK_LIST  TK_SQL  parameter_list  TK_SQR  
+T[inputparameters][TK_SQL] : TK_SQL  idlist  TK_SQR  
+T[iostmt][TK_READ] : TK_READ  TK_OP  singleorrecid  TK_CL  TK_SEM  
+T[iostmt][TK_WRITE] : TK_WRITE  TK_OP  allvar  TK_CL  TK_SEM  
+T[iterativestmt][TK_WHILE] : TK_WHILE  TK_OP  booleanexpression  TK_CL  stmt  otherstmts  TK_ENDWHILE  
+T[logicalop][TK_AND] : TK_AND  
+T[logicalop][TK_OR] : TK_OR  
+T[mainfunction][TK_MAIN] : TK_MAIN  stmts  TK_END  
+T[more_ids][TK_COMMA] : TK_COMMA  idlist  
+T[more_ids][TK_SQR] : TK_EPS  
+T[morefields][TK_ENDRECORD] : TK_EPS  
+T[morefields][TK_TYPE] : fielddefinition  morefields  
+T[muldiv][TK_DIV] : TK_DIV  
+T[muldiv][TK_MUL] : TK_MUL  
+T[optionalreturn][TK_SEM] : TK_EPS  
+T[optionalreturn][TK_SQL] : TK_SQL  idlist  TK_SQR  
+T[otherfunctions][TK_FUNID] : function  otherfunctions  
+T[otherfunctions][TK_MAIN] : TK_EPS  
+T[otherstmts][TK_CALL] : stmt  otherstmts  
+T[otherstmts][TK_ENDWHILE] : TK_EPS  
+T[otherstmts][TK_ELSE] : TK_EPS  
+T[otherstmts][TK_ENDIF] : TK_EPS  
+T[otherstmts][TK_ID] : stmt  otherstmts  
+T[otherstmts][TK_IF] : stmt  otherstmts  
+T[otherstmts][TK_READ] : stmt  otherstmts  
+T[otherstmts][TK_RETURN] : TK_EPS  
+T[otherstmts][TK_SQL] : stmt  otherstmts  
+T[otherstmts][TK_WHILE] : stmt  otherstmts  
+T[otherstmts][TK_WRITE] : stmt  otherstmts  
+T[output_par][TK_OUPUT] : TK_OUPUT  TK_PARAMETER  TK_LIST  TK_SQL  parameter_list  TK_SQR  
+T[output_par][TK_SEM] : TK_EPS  
+T[outputparameters][TK_CALL] : TK_EPS  
+T[outputparameters][TK_SQL] : TK_SQL  idlist  TK_SQR  TK_ASSIGNOP  
+T[parameter_list][TK_INT] : datatype  TK_ID  remaining_list  
+T[parameter_list][TK_REAL] : datatype  TK_ID  remaining_list  
+T[parameter_list][TK_RECORD] : datatype  TK_ID  remaining_list  
+T[plusminus][TK_MINUS] : TK_MINUS  
+T[plusminus][TK_PLUS] : TK_PLUS  
+T[primitivedatatype][TK_INT] : TK_INT  
+T[primitivedatatype][TK_REAL] : TK_REAL  
+T[program][TK_DOLLAR] : otherfunctions  mainfunction  
+T[program][TK_FUNID] : otherfunctions  mainfunction  
+T[program][TK_MAIN] : otherfunctions  mainfunction  
+T[relationalop][TK_EQ] : TK_EQ  
+T[relationalop][TK_GT] : TK_GT  
+T[relationalop][TK_GE] : TK_GE  
+T[relationalop][TK_LT] : TK_LT  
+T[relationalop][TK_LE] : TK_LE  
+T[relationalop][TK_NE] : TK_NE  
+T[remaining_list][TK_COMMA] : TK_COMMA  parameter_list  
+T[remaining_list][TK_SQR] : TK_EPS  
+T[returnstmt][TK_RETURN] : TK_RETURN  optionalreturn  TK_SEM  
+T[singleorrecid][TK_ID] : TK_ID  singleorrecid_  
+T[singleorrecid_][TK_ASSIGNOP] : TK_EPS  
+T[singleorrecid_][TK_CL] : TK_EPS  
+T[singleorrecid_][TK_DOT] : TK_DOT  TK_FIELDID  
+T[singleorrecid_][TK_DIV] : TK_EPS  
+T[singleorrecid_][TK_EQ] : TK_EPS  
+T[singleorrecid_][TK_GT] : TK_EPS  
+T[singleorrecid_][TK_GE] : TK_EPS  
+T[singleorrecid_][TK_LT] : TK_EPS  
+T[singleorrecid_][TK_LE] : TK_EPS  
+T[singleorrecid_][TK_MUL] : TK_EPS  
+T[singleorrecid_][TK_MINUS] : TK_EPS  
+T[singleorrecid_][TK_NE] : TK_EPS  
+T[singleorrecid_][TK_PLUS] : TK_EPS  
+T[singleorrecid_][TK_SEM] : TK_EPS  
+T[stmt][TK_CALL] : funcallstmt  
+T[stmt][TK_ID] : assignmentstmt  
+T[stmt][TK_IF] : conditionalstmt  
+T[stmt][TK_READ] : iostmt  
+T[stmt][TK_SQL] : funcallstmt  
+T[stmt][TK_WHILE] : iterativestmt  
+T[stmt][TK_WRITE] : iostmt  
+T[stmts][TK_CALL] : typedefinitions  declarations  otherstmts  returnstmt  
+T[stmts][TK_END] : typedefinitions  declarations  otherstmts  returnstmt  
+T[stmts][TK_ID] : typedefinitions  declarations  otherstmts  returnstmt  
+T[stmts][TK_IF] : typedefinitions  declarations  otherstmts  returnstmt  
+T[stmts][TK_RECORD] : typedefinitions  declarations  otherstmts  returnstmt  
+T[stmts][TK_READ] : typedefinitions  declarations  otherstmts  returnstmt  
+T[stmts][TK_RETURN] : typedefinitions  declarations  otherstmts  returnstmt  
+T[stmts][TK_SQL] : typedefinitions  declarations  otherstmts  returnstmt  
+T[stmts][TK_TYPE] : typedefinitions  declarations  otherstmts  returnstmt  
+T[stmts][TK_WHILE] : typedefinitions  declarations  otherstmts  returnstmt  
+T[stmts][TK_WRITE] : typedefinitions  declarations  otherstmts  returnstmt  
+T[term][TK_ID] : factor  termprime  
+T[term][TK_NUM] : factor  termprime  
+T[term][TK_OP] : factor  termprime  
+T[term][TK_RECORDID] : factor  termprime  
+T[term][TK_RNUM] : factor  termprime  
+T[termprime][TK_CL] : TK_EPS  
+T[termprime][TK_DIV] : muldiv  factor  termprime  
+T[termprime][TK_MUL] : muldiv  factor  termprime  
+T[termprime][TK_MINUS] : TK_EPS  
+T[termprime][TK_PLUS] : TK_EPS  
+T[termprime][TK_SEM] : TK_EPS  
+T[typedefinition][TK_RECORD] : TK_RECORD  TK_RECORDID  fielddefinitions  TK_ENDRECORD  TK_SEM  
+T[typedefinitions][TK_CALL] : TK_EPS  
+T[typedefinitions][TK_ID] : TK_EPS  
+T[typedefinitions][TK_IF] : TK_EPS  
+T[typedefinitions][TK_RECORD] : typedefinition  typedefinitions  
+T[typedefinitions][TK_READ] : TK_EPS  
+T[typedefinitions][TK_RETURN] : TK_EPS  
+T[typedefinitions][TK_SQL] : TK_EPS  
+T[typedefinitions][TK_TYPE] : TK_EPS  
+T[typedefinitions][TK_WHILE] : TK_EPS  
+T[typedefinitions][TK_WRITE] : TK_EPS  
+T[var][TK_ID] : TK_ID  singleorrecid_  
+T[var][TK_NUM] : TK_NUM  
+T[var][TK_RNUM] : TK_RNUM  

@@ -1,0 +1,254 @@
+------	all	no	program
+------	program	no	otherfunctions
+------	otherfunctions	no	function
+_statistics 	 2 	 TK_FUNID 	 _statistics 	 function 	 yes 	 TK_FUNID
+------	function	no	input_par
+input 	 3 	 TK_INPUT 	 input 	 input_par 	 yes 	 TK_INPUT
+parameter 	 3 	 TK_PARAMETER 	 parameter 	 input_par 	 yes 	 TK_PARAMETER
+list 	 3 	 TK_LIST 	 list 	 input_par 	 yes 	 TK_LIST
+[ 	 3 	 TK_SQL 	 [ 	 input_par 	 yes 	 TK_SQL
+------	input_par	no	parameter_list
+------	parameter_list	no	datatype
+------	datatype	no	primitivedatatype
+int 	 3 	 TK_INT 	 int 	 primitivedatatype 	 yes 	 TK_INT
+c2dbc 	 3 	 TK_ID 	 c2dbc 	 parameter_list 	 yes 	 TK_ID
+------	parameter_list	no	remaining_list
+, 	 3 	 TK_COMMA 	 , 	 remaining_list 	 yes 	 TK_COMMA
+------	remaining_list	no	parameter_list
+------	parameter_list	no	datatype
+------	datatype	no	primitivedatatype
+int 	 3 	 TK_INT 	 int 	 primitivedatatype 	 yes 	 TK_INT
+d7 	 3 	 TK_ID 	 d7 	 parameter_list 	 yes 	 TK_ID
+------	parameter_list	no	remaining_list
+, 	 3 	 TK_COMMA 	 , 	 remaining_list 	 yes 	 TK_COMMA
+------	remaining_list	no	parameter_list
+------	parameter_list	no	datatype
+------	datatype	no	primitivedatatype
+int 	 3 	 TK_INT 	 int 	 primitivedatatype 	 yes 	 TK_INT
+b2d567 	 3 	 TK_ID 	 b2d567 	 parameter_list 	 yes 	 TK_ID
+------	parameter_list	no	remaining_list
+------	remaining_list	yes	TK_EPS
+] 	 3 	 TK_SQR 	 ] 	 input_par 	 yes 	 TK_SQR
+------	function	no	output_par
+output 	 4 	 TK_OUPUT 	 output 	 output_par 	 yes 	 TK_OUPUT
+parameter 	 4 	 TK_PARAMETER 	 parameter 	 output_par 	 yes 	 TK_PARAMETER
+list 	 4 	 TK_LIST 	 list 	 output_par 	 yes 	 TK_LIST
+[ 	 4 	 TK_SQL 	 [ 	 output_par 	 yes 	 TK_SQL
+------	output_par	no	parameter_list
+------	parameter_list	no	datatype
+------	datatype	no	primitivedatatype
+real 	 4 	 TK_REAL 	 real 	 primitivedatatype 	 yes 	 TK_REAL
+d2 	 4 	 TK_ID 	 d2 	 parameter_list 	 yes 	 TK_ID
+------	parameter_list	no	remaining_list
+, 	 4 	 TK_COMMA 	 , 	 remaining_list 	 yes 	 TK_COMMA
+------	remaining_list	no	parameter_list
+------	parameter_list	no	datatype
+------	datatype	no	primitivedatatype
+real 	 4 	 TK_REAL 	 real 	 primitivedatatype 	 yes 	 TK_REAL
+c3bcd 	 4 	 TK_ID 	 c3bcd 	 parameter_list 	 yes 	 TK_ID
+------	parameter_list	no	remaining_list
+------	remaining_list	yes	TK_EPS
+] 	 4 	 TK_SQR 	 ] 	 output_par 	 yes 	 TK_SQR
+; 	 4 	 TK_SEM 	 ; 	 function 	 yes 	 TK_SEM
+------	function	no	stmts
+------	stmts	no	typedefinitions
+------	typedefinitions	yes	TK_EPS
+------	stmts	no	declarations
+------	declarations	no	declaration
+type 	 5 	 TK_TYPE 	 type 	 declaration 	 yes 	 TK_TYPE
+------	declaration	no	datatype
+------	datatype	no	primitivedatatype
+real 	 5 	 TK_REAL 	 real 	 primitivedatatype 	 yes 	 TK_REAL
+: 	 5 	 TK_COLON 	 : 	 declaration 	 yes 	 TK_COLON
+c3 	 5 	 TK_ID 	 c3 	 declaration 	 yes 	 TK_ID
+------	declaration	no	global_or_not
+: 	 5 	 TK_COLON 	 : 	 global_or_not 	 yes 	 TK_COLON
+global 	 5 	 TK_GLOBAL 	 global 	 global_or_not 	 yes 	 TK_GLOBAL
+; 	 5 	 TK_SEM 	 ; 	 declaration 	 yes 	 TK_SEM
+------	declarations	no	declarations
+------	declarations	yes	TK_EPS
+------	stmts	no	otherstmts
+------	otherstmts	no	stmt
+------	stmt	no	assignmentstmt
+------	assignmentstmt	no	singleorrecid
+c3 	 8 	 TK_ID 	 c3 	 singleorrecid 	 yes 	 TK_ID
+------	singleorrecid	no	singleorrecid_
+------	singleorrecid_	yes	TK_EPS
+<--- 	 8 	 TK_ASSIGNOP 	 <--- 	 assignmentstmt 	 yes 	 TK_ASSIGNOP
+------	assignmentstmt	no	arithmeticexpression
+------	arithmeticexpression	no	term
+------	term	no	factor
+------	factor	no	all
+3 	 8 	 TK_NUM 	 3 	 all 	 yes 	 TK_NUM
+------	term	no	termprime
+------	termprime	yes	TK_EPS
+------	arithmeticexpression	no	innerterm
+------	innerterm	yes	TK_EPS
+; 	 8 	 TK_SEM 	 ; 	 assignmentstmt 	 yes 	 TK_SEM
+------	otherstmts	no	otherstmts
+------	otherstmts	no	stmt
+------	stmt	no	assignmentstmt
+------	assignmentstmt	no	singleorrecid
+d2 	 9 	 TK_ID 	 d2 	 singleorrecid 	 yes 	 TK_ID
+------	singleorrecid	no	singleorrecid_
+------	singleorrecid_	yes	TK_EPS
+<--- 	 9 	 TK_ASSIGNOP 	 <--- 	 assignmentstmt 	 yes 	 TK_ASSIGNOP
+------	assignmentstmt	no	arithmeticexpression
+------	arithmeticexpression	no	term
+------	term	no	factor
+( 	 9 	 TK_OP 	 ( 	 factor 	 yes 	 TK_OP
+------	factor	no	arithmeticexpression
+------	arithmeticexpression	no	term
+------	term	no	factor
+------	factor	no	all
+c2dbc 	 9 	 TK_ID 	 c2dbc 	 all 	 yes 	 TK_ID
+------	all	no	singleorrecid_
+------	singleorrecid_	yes	TK_EPS
+------	term	no	termprime
+------	termprime	yes	TK_EPS
+------	arithmeticexpression	no	innerterm
+------	innerterm	no	plusminus
++ 	 9 	 TK_PLUS 	 + 	 plusminus 	 yes 	 TK_PLUS
+------	innerterm	no	term
+------	term	no	factor
+------	factor	no	all
+d7 	 9 	 TK_ID 	 d7 	 all 	 yes 	 TK_ID
+------	all	no	singleorrecid_
+------	singleorrecid_	yes	TK_EPS
+------	term	no	termprime
+------	termprime	yes	TK_EPS
+------	innerterm	no	innerterm
+------	innerterm	no	plusminus
++ 	 9 	 TK_PLUS 	 + 	 plusminus 	 yes 	 TK_PLUS
+------	innerterm	no	term
+------	term	no	factor
+------	factor	no	all
+b2d567 	 9 	 TK_ID 	 b2d567 	 all 	 yes 	 TK_ID
+------	all	no	singleorrecid_
+------	singleorrecid_	yes	TK_EPS
+------	term	no	termprime
+------	termprime	yes	TK_EPS
+------	innerterm	no	innerterm
+------	innerterm	yes	TK_EPS
+) 	 9 	 TK_CL 	 ) 	 factor 	 yes 	 TK_CL
+------	term	no	termprime
+------	termprime	no	muldiv
+/ 	 9 	 TK_DIV 	 / 	 muldiv 	 yes 	 TK_DIV
+------	termprime	no	factor
+------	factor	no	all
+c3 	 9 	 TK_ID 	 c3 	 all 	 yes 	 TK_ID
+------	all	no	singleorrecid_
+------	singleorrecid_	yes	TK_EPS
+------	termprime	no	termprime
+------	termprime	yes	TK_EPS
+------	arithmeticexpression	no	innerterm
+------	innerterm	yes	TK_EPS
+; 	 9 	 TK_SEM 	 ; 	 assignmentstmt 	 yes 	 TK_SEM
+------	otherstmts	no	otherstmts
+------	otherstmts	no	stmt
+------	stmt	no	assignmentstmt
+------	assignmentstmt	no	singleorrecid
+c3bcd 	 10 	 TK_ID 	 c3bcd 	 singleorrecid 	 yes 	 TK_ID
+------	singleorrecid	no	singleorrecid_
+------	singleorrecid_	yes	TK_EPS
+<--- 	 10 	 TK_ASSIGNOP 	 <--- 	 assignmentstmt 	 yes 	 TK_ASSIGNOP
+------	assignmentstmt	no	arithmeticexpression
+------	arithmeticexpression	no	term
+------	term	no	factor
+------	factor	no	all
+d2 	 10 	 TK_ID 	 d2 	 all 	 yes 	 TK_ID
+------	all	no	singleorrecid_
+------	singleorrecid_	yes	TK_EPS
+------	term	no	termprime
+------	termprime	no	muldiv
+* 	 10 	 TK_MUL 	 * 	 muldiv 	 yes 	 TK_MUL
+------	termprime	no	factor
+------	factor	no	all
+3.23 	 10 	 TK_RNUM 	 3.23 	 all 	 yes 	 TK_RNUM
+------	termprime	no	termprime
+------	termprime	yes	TK_EPS
+------	arithmeticexpression	no	innerterm
+------	innerterm	yes	TK_EPS
+; 	 10 	 TK_SEM 	 ; 	 assignmentstmt 	 yes 	 TK_SEM
+------	otherstmts	no	otherstmts
+------	otherstmts	no	stmt
+------	stmt	no	assignmentstmt
+------	assignmentstmt	no	singleorrecid
+b3bcd 	 11 	 TK_ID 	 b3bcd 	 singleorrecid 	 yes 	 TK_ID
+------	singleorrecid	no	singleorrecid_
+------	singleorrecid_	yes	TK_EPS
+<--- 	 11 	 TK_ASSIGNOP 	 <--- 	 assignmentstmt 	 yes 	 TK_ASSIGNOP
+------	assignmentstmt	no	arithmeticexpression
+------	arithmeticexpression	no	term
+------	term	no	factor
+------	factor	no	all
+23 	 11 	 TK_NUM 	 23 	 all 	 yes 	 TK_NUM
+------	term	no	termprime
+------	termprime	yes	TK_EPS
+------	arithmeticexpression	no	innerterm
+------	innerterm	yes	TK_EPS
+; 	 11 	 TK_SEM 	 ; 	 assignmentstmt 	 yes 	 TK_SEM
+------	otherstmts	no	otherstmts
+------	otherstmts	no	stmt
+------	stmt	no	assignmentstmt
+------	assignmentstmt	no	singleorrecid
+b3bcd 	 12 	 TK_ID 	 b3bcd 	 singleorrecid 	 yes 	 TK_ID
+------	singleorrecid	no	singleorrecid_
+------	singleorrecid_	yes	TK_EPS
+<--- 	 12 	 TK_ASSIGNOP 	 <--- 	 assignmentstmt 	 yes 	 TK_ASSIGNOP
+------	assignmentstmt	no	arithmeticexpression
+------	arithmeticexpression	no	term
+------	term	no	factor
+------	factor	no	all
+48 	 12 	 TK_NUM 	 48 	 all 	 yes 	 TK_NUM
+------	term	no	termprime
+------	termprime	yes	TK_EPS
+------	arithmeticexpression	no	innerterm
+------	innerterm	no	plusminus
++ 	 12 	 TK_PLUS 	 + 	 plusminus 	 yes 	 TK_PLUS
+------	innerterm	no	term
+------	term	no	factor
+------	factor	no	all
+3 	 12 	 TK_NUM 	 3 	 all 	 yes 	 TK_NUM
+------	term	no	termprime
+------	termprime	yes	TK_EPS
+------	innerterm	no	innerterm
+------	innerterm	yes	TK_EPS
+; 	 12 	 TK_SEM 	 ; 	 assignmentstmt 	 yes 	 TK_SEM
+------	otherstmts	no	otherstmts
+------	otherstmts	no	stmt
+------	stmt	no	assignmentstmt
+------	assignmentstmt	no	singleorrecid
+c4d 	 13 	 TK_ID 	 c4d 	 singleorrecid 	 yes 	 TK_ID
+------	singleorrecid	no	singleorrecid_
+------	singleorrecid_	yes	TK_EPS
+<--- 	 13 	 TK_ASSIGNOP 	 <--- 	 assignmentstmt 	 yes 	 TK_ASSIGNOP
+------	assignmentstmt	no	arithmeticexpression
+------	arithmeticexpression	no	term
+------	term	no	factor
+------	factor	no	all
+56 	 13 	 TK_NUM 	 56 	 all 	 yes 	 TK_NUM
+------	term	no	termprime
+------	termprime	yes	TK_EPS
+------	arithmeticexpression	no	innerterm
+------	innerterm	yes	TK_EPS
+; 	 13 	 TK_SEM 	 ; 	 assignmentstmt 	 yes 	 TK_SEM
+------	otherstmts	no	otherstmts
+------	otherstmts	yes	TK_EPS
+------	stmts	no	returnstmt
+return 	 14 	 TK_RETURN 	 return 	 returnstmt 	 yes 	 TK_RETURN
+------	returnstmt	no	optionalreturn
+[ 	 14 	 TK_SQL 	 [ 	 optionalreturn 	 yes 	 TK_SQL
+------	optionalreturn	no	idlist
+d2 	 14 	 TK_ID 	 d2 	 idlist 	 yes 	 TK_ID
+------	idlist	no	more_ids
+, 	 14 	 TK_COMMA 	 , 	 more_ids 	 yes 	 TK_COMMA
+------	more_ids	no	idlist
+c3bcd 	 14 	 TK_ID 	 c3bcd 	 idlist 	 yes 	 TK_ID
+------	idlist	no	more_ids
+------	more_ids	yes	TK_EPS
+] 	 14 	 TK_SQR 	 ] 	 optionalreturn 	 yes 	 TK_SQR
+; 	 14 	 TK_SEM 	 ; 	 returnstmt 	 yes 	 TK_SEM
+------	function	yes	TK_END
+------	otherfunctions	yes	otherfunctions
+------	program	yes	mainfunction

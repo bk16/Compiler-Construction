@@ -1,0 +1,9 @@
+
+_main
+type int : edition;
+type float: price;
+edition <--- 3;
+price <--- 24.95;
+edition <--- 2;
+print(d2);
+end
